@@ -1,0 +1,1418 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
+  <link rel="icon" href="/img/cat.ico">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yangyang Kong">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="JVM内存区域（Java内存区域详解（重点） | JavaGuide） D. 本地方法栈 (Native Method Stack) —— 线程私有  存什么：为 native 方法服务（如 System.currentTimeMillis() 这种 C++ 写的底层方法）。  E. 程序计数器 (PC Register) —— 线程私有  存什么：当前线程执行到的字节码行号。 作用：线程切换回来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM">
+<meta property="og:url" content="https://kyy-logs.github.io/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/index.html">
+<meta property="og:site_name" content="多云的小站">
+<meta property="og:description" content="JVM内存区域（Java内存区域详解（重点） | JavaGuide） D. 本地方法栈 (Native Method Stack) —— 线程私有  存什么：为 native 方法服务（如 System.currentTimeMillis() 这种 C++ 写的底层方法）。  E. 程序计数器 (PC Register) —— 线程私有  存什么：当前线程执行到的字节码行号。 作用：线程切换回来">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260120235602280-1775807911015.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260121115234846-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260121115257476-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260121115305960-1775807911016.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/b3ac1bea49e1b576c00dea7e75eb271b.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260410163236183.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260410163245029.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110019006-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110132399-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110159056-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107111042385-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107111316969-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110852695-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110915889-1775807911016.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260109231003665-1775807911016.png">
+<meta property="article:published_time" content="2026-04-09T14:28:06.000Z">
+<meta property="article:modified_time" content="2026-04-11T02:05:19.999Z">
+<meta property="article:author" content="Yangyang Kong">
+<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kyy-logs.github.io/img/blog/image-20260120235602280-1775807911015.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>JVM - 多云的小站</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kyy-logs.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":null,"loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>多云的小站</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-code-fill"></i>
+                <span>语言</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/language/java/" target="_self">
+                    <i class="iconfont icon-tags-fill"></i>
+                    <span>Java</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/language/spring/" target="_self">
+                    <i class="iconfont icon-tags-fill"></i>
+                    <span>Spring</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-database-fill"></i>
+                <span>数据库</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/database/mysql/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>MySQL</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/database/redis/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>Redis</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/mq/" target="_self">
+                <i class="iconfont icon-interactive-fill"></i>
+                <span>消息队列</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                <span>计算机基础</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>计算机网络</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>操作系统</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/algorithm/" target="_self">
+                <i class="iconfont icon-launch-fill"></i>
+                <span>算法</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/scenario/" target="_self">
+                <i class="iconfont icon-project-fill"></i>
+                <span>场景题</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/opensource/" target="_self">
+                <i class="iconfont icon-github-fill"></i>
+                <span>开源项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="JVM"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-04-09 22:28" pubdate>
+          2026年4月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          68 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">JVM</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="JVM内存区域（Java内存区域详解（重点）-JavaGuide）"><a href="#JVM内存区域（Java内存区域详解（重点）-JavaGuide）" class="headerlink" title="JVM内存区域（Java内存区域详解（重点） | JavaGuide）"></a>JVM内存区域（<a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/memory-area.html">Java内存区域详解（重点） | JavaGuide</a>）</h1><p><img src="/../../../img/blog/image-20260120235602280-1775807911015.png" srcset="/img/loading.gif" lazyload alt="image-20260120235602280"></p>
+<p><strong>D. 本地方法栈 (Native Method Stack) —— 线程私有</strong></p>
+<ul>
+<li><strong>存什么</strong>：为 native 方法服务（如 System.currentTimeMillis() 这种 C++ 写的底层方法）。</li>
+</ul>
+<p><strong>E. 程序计数器 (PC Register) —— 线程私有</strong></p>
+<ul>
+<li><strong>存什么</strong>：当前线程执行到的<strong>字节码行号</strong>。</li>
+<li><strong>作用</strong>：线程切换回来后，知道接着从哪一行开始执行。</li>
+<li><strong>特点</strong>：唯一一个<strong>不会发生 OOM</strong> 的区域。</li>
+</ul>
+<h1 id="谈谈你理解的堆内存和栈内存，说说他们之间的区别；"><a href="#谈谈你理解的堆内存和栈内存，说说他们之间的区别；" class="headerlink" title="谈谈你理解的堆内存和栈内存，说说他们之间的区别；"></a>谈谈你理解的堆内存和栈内存，说说他们之间的区别；</h1><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>堆（Heap）</th>
+<th>栈（Stack）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>内存分配方式</strong></td>
+<td>动态分配（运行时）</td>
+<td>自动分配（编译时确定大小）</td>
+</tr>
+<tr>
+<td><strong>管理方式</strong></td>
+<td>手动管理（程序员或GC）</td>
+<td>自动管理（函数调用时分配和释放）</td>
+</tr>
+<tr>
+<td><strong>存储内容</strong></td>
+<td>对象实例、动态数据</td>
+<td>局部变量、函数参数、返回地址</td>
+</tr>
+<tr>
+<td><strong>生命周期</strong></td>
+<td>不确定，需手动释放或由GC回收</td>
+<td>随函数调用开始和结束自动分配和释放</td>
+</tr>
+<tr>
+<td><strong>访问速度</strong></td>
+<td>较慢</td>
+<td>快</td>
+</tr>
+<tr>
+<td><strong>空间大小</strong></td>
+<td>较大</td>
+<td>较小</td>
+</tr>
+<tr>
+<td><strong>碎片问题</strong></td>
+<td>可能存在内存碎片</td>
+<td>不存在内存碎片</td>
+</tr>
+<tr>
+<td><strong>线程共享</strong></td>
+<td><mark>线程间共享</mark></td>
+<td><mark>线程独立</mark></td>
+</tr>
+</tbody></table>
+<h1 id="垃圾回收算法-判断垃圾的方法有哪些？-垃圾回收器（JVM垃圾回收详解（重点）-JavaGuide）"><a href="#垃圾回收算法-判断垃圾的方法有哪些？-垃圾回收器（JVM垃圾回收详解（重点）-JavaGuide）" class="headerlink" title="垃圾回收算法,*判断垃圾的方法有哪些？,垃圾回收器（JVM垃圾回收详解（重点） | JavaGuide）"></a>垃圾回收算法,*<em>判断垃圾的方法有哪些？</em>,垃圾回收器（<a href="httpsR://javaguide.cn/java/jvm/jvm-garbage-collection.html#堆空间的基本结构">JVM垃圾回收详解（重点） | JavaGuide</a>）</h1><h1 id="知道full-GC的虚拟机调优吗"><a href="#知道full-GC的虚拟机调优吗" class="headerlink" title="知道full GC的虚拟机调优吗"></a>知道full GC的虚拟机调优吗</h1><p>“针对 Full GC 的调优，我的核心策略是 <strong>‘将对象尽可能留在新生代’</strong>。</p>
+<ol>
+<li>首先，我会分析 GC 日志。如果发现 Full GC 频繁，且老年代增长很快，通常说明<strong>新生代太小</strong>或者<strong>晋升过快</strong>。</li>
+<li>我会尝试<strong>调大新生代 (-Xmn)</strong>，让短命对象在 Young GC 阶段就被回收掉，减少流向老年代的数量。</li>
+<li>如果应用是大内存服务（如 8G+），我会切换到 <strong>G1 收集器</strong>，并设置 -XX:MaxGCPauseMillis，利用 G1 的 Mixed GC 代替传统的 Full GC，从而控制停顿时间。</li>
+<li>最后，我会检查代码，杜绝 System.gc() 的显式调用（通过 -XX:+DisableExplicitGC）。”</li>
+</ol>
+<h1 id="JVM堆、栈的原理和区别"><a href="#JVM堆、栈的原理和区别" class="headerlink" title="JVM堆、栈的原理和区别"></a>JVM堆、栈的原理和区别</h1><h1 id="哪些可以作为Gc-Root-G1垃圾回收器的特点，会产生停顿嘛？-深入JVM：详解G1垃圾回收器原理-CSDN博客-G1-垃圾回收器中的可预测停顿模型是如何实现的？"><a href="#哪些可以作为Gc-Root-G1垃圾回收器的特点，会产生停顿嘛？-深入JVM：详解G1垃圾回收器原理-CSDN博客-G1-垃圾回收器中的可预测停顿模型是如何实现的？" class="headerlink" title="哪些可以作为Gc Root,G1垃圾回收器的特点，会产生停顿嘛？(深入JVM：详解G1垃圾回收器原理-CSDN博客)G1 垃圾回收器中的可预测停顿模型是如何实现的？"></a>哪些可以作为Gc Root,G1垃圾回收器的特点，会产生停顿嘛？(<a target="_blank" rel="noopener" href="https://blog.csdn.net/mm1274889792/article/details/139030273">深入JVM：详解G1垃圾回收器原理-CSDN博客</a>)G1 垃圾回收器中的可预测停顿模型是如何实现的？</h1><p><strong>哪些对象可以作为 GC Roots 呢？</strong></p>
+<ul>
+<li>虚拟机栈(栈帧中的局部变量表)中引用的对象</li>
+<li>本地方法栈(Native 方法)中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>所有被同步锁持有的对象</li>
+</ul>
+<p><img src="/../../../img/blog/image-20260121115234846-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115234846"></p>
+<p><img src="/../../../img/blog/image-20260121115257476-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115257476"></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="/../../../img/blog/image-20260121115305960-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115305960"></h2><p><strong>第一阶段：运行时赋值（埋雷）</strong></p>
+<p><strong>场景</strong>：代码正在运行，老年代对象 OldObj（位于 Region A）的字段引用了新生代对象 YoungObj（位于 Region B）。<br>代码：OldObj.field &#x3D; YoungObj;</p>
+<ol>
+<li><strong>拦截（Write Barrier）</strong>：<br>JVM 不会直接干巴巴地执行赋值。在赋值操作完成后，<strong>写屏障（Post-Write Barrier）</strong> 像一个安检员一样拦截了这个操作。</li>
+<li><strong>标记脏卡（Mark Dirty）</strong>：<br>写屏障根据 OldObj 的内存地址，算出它属于哪个 <strong>卡页（Card Page）</strong>。然后把全局 <strong>卡表（Card Table）</strong> 中对应的位置标记为 <strong>Dirty（脏）</strong>。<ul>
+<li><em>潜台词：“注意！Region A 的第 X 页这块地儿有情况！”</em></li>
+</ul>
+</li>
+<li><strong>入队（Enqueue）</strong>：<br>为了不卡顿主线程，G1 不会立刻去更新复杂的 RSet 数据结构。它只是把这个“脏卡页的坐标”丢到一个 <strong>线程本地的脏卡队列（Dirty Card Queue）</strong> 里，然后主线程就继续跑业务代码了。</li>
+</ol>
+<p><strong>第二阶段：异步处理（传导）</strong></p>
+<p><strong>场景</strong>：后台默默工作，不影响业务线程。</p>
+<ol>
+<li><p><strong>后台线程处理（Refinement Threads）</strong>：<br>JVM 内部有一组 <strong>并发优化线程（Concurrent Refinement Threads）</strong>。它们发现脏卡队列里有东西了，就取出来处理。</p>
+</li>
+<li><p><strong>更新 RSet（关键一步）</strong>：<br>线程拿到“Region A 的第 X 页”这个坐标，它会去解析这一页，发现这里指向了 Region B。<br>于是，它找到 <strong>Region B 的记忆集（RSet）</strong>，在里面记上一笔：</p>
+<blockquote>
+<p><strong>“Region A 的第 X 卡页 引用了我！”</strong></p>
+</blockquote>
+<ul>
+<li><em>注意方向：RSet 是“谁引用了我”。所以是 Region B（被引用者）记录了 Region A（引用者）的位置。</em></li>
+</ul>
+</li>
+</ol>
+<p><strong>三阶段：GC 发生时（扫雷）</strong></p>
+<p><strong>场景</strong>：发生了 Young GC，我们要回收 Region B（新生代）。</p>
+<ol>
+<li><strong>面临问题</strong>：<br>我们不知道 YoungObj 是不是活的。如果全堆扫描 Region A（老年代）太慢了。</li>
+<li><strong>查 RSet</strong>：<br>GC 线程直接打开 <strong>Region B 的 RSet</strong>。<br>RSet 告诉它：“别瞎找了，去 <strong>Region A 的第 X 卡页</strong> 看看，那里有人引用我。”</li>
+<li><strong>精准扫描</strong>：<br>GC 线程直接跳到 Region A 的第 X 卡页（只有 512 字节），扫描这一小块内存。<br>它立刻发现了 OldObj 引用着 YoungObj。</li>
+<li><strong>标记存活</strong>：<br>YoungObj 被标记为存活，复制到 Survivor 区，逃过一劫。</li>
+</ol>
+<h1 id="GC年轻代回收的过程-GC的时机-什么时候会触发full-GC，触发了该怎么排查处理-JVM-GC过程总结-minor-GC-和-Full-GC-CSDN博客"><a href="#GC年轻代回收的过程-GC的时机-什么时候会触发full-GC，触发了该怎么排查处理-JVM-GC过程总结-minor-GC-和-Full-GC-CSDN博客" class="headerlink" title="GC年轻代回收的过程,GC的时机,什么时候会触发full GC，触发了该怎么排查处理(JVM: GC过程总结(minor GC 和 Full GC)-CSDN博客)"></a>GC年轻代回收的过程,GC的时机,什么时候会触发full GC，触发了该怎么排查处理(<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42615068/article/details/102813947">JVM: GC过程总结(minor GC 和 Full GC)-CSDN博客</a>)</h1><img src="https://i-blog.csdnimg.cn/blog_migrate/b3ac1bea49e1b576c00dea7e75eb271b.png" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 80%;" /> 
+
+<ul>
+<li>Eden：这是对象最初诞生的区域，并且对大多数对象来说，这里是它们唯一存在过的区域。</li>
+<li>Survivor区： 存活区，每次Minor GC 完后，将仍然被引用的对象存放的区域，有两个同样大小的区域。</li>
+</ul>
+<p><strong>full gc触发了该怎么排查处理</strong></p>
+<ol>
+<li>出现异常可以先通过jstat、jmap等分析一下堆的情况，以及gc情况。</li>
+<li>通过分析gc日志可以快速定位gc触发的原因，以及堆的变化。</li>
+<li>如果是System.gc主动触发，可以通过阿里开源的arthas去拦截得到调用链。</li>
+</ol>
+<h1 id="CMS-和-G1-垃圾收集器的区别？"><a href="#CMS-和-G1-垃圾收集器的区别？" class="headerlink" title="CMS 和 G1 垃圾收集器的区别？"></a>CMS 和 G1 垃圾收集器的区别？</h1><p><strong>一、 核心架构区别</strong></p>
+<p><strong>1. 内存布局</strong></p>
+<ul>
+<li><strong>CMS (Concurrent Mark Sweep)</strong><ul>
+<li><strong>物理分代</strong>：堆内存被物理隔离为一块连续的 <strong>Eden</strong>、两块 <strong>Survivor</strong> 和一块连续的 <strong>Old (老年代)</strong>。</li>
+<li><strong>职责单一</strong>：CMS 专门负责回收<strong>老年代</strong>（通常配合 ParNew 回收新生代）。</li>
+</ul>
+</li>
+<li><strong>G1 (Garbage-First)</strong><ul>
+<li><strong>Region 分区</strong>：堆被切分成几千个大小相等的小方块（<strong>Region</strong>）。</li>
+<li><strong>逻辑分代</strong>：这些 Region 物理上不连续，但逻辑上被标记为 Eden、Survivor 或 Old。</li>
+<li><strong>Humongous</strong>：专门处理大对象的区域。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 回收算法</strong></p>
+<ul>
+<li><strong>CMS</strong>：<strong>标记-清除 (Mark-Sweep)</strong>。<ul>
+<li><em>致命伤</em>：<strong>内存碎片</strong>。就像切蛋糕切得乱七八糟，最后剩下一堆碎渣。虽然总量够，但放不下一个大盘子，导致频繁触发 Full GC（STW）来整理碎片。</li>
+</ul>
+</li>
+<li><strong>G1</strong>：<strong>标记-整理 (Mark-Compact)</strong>（整体看）&#x2F; <strong>复制 (Copying)</strong>（局部看）。<ul>
+<li><em>优势</em>：G1 把存活对象从一个 Region <strong>复制</strong>到另一个 Region。这天然起到了<strong>整理内存</strong>的作用，<strong>没有碎片</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>二、 核心特性区别</strong></p>
+<p><strong>1. 停顿模型 (Pause Prediction) —— <em>G1 的杀手锏</em></strong></p>
+<ul>
+<li><strong>CMS</strong>：<strong>尽力而为</strong>。它尽量并发执行，减少停顿，但如果碎片太多导致 Full GC，可能会卡死很久（不可控）。</li>
+<li><strong>G1</strong>：<strong>可预测停顿</strong>。<ul>
+<li>你可以设置 -XX:MaxGCPauseMillis&#x3D;200。</li>
+<li>G1 会去算每个 Region 里有多少垃圾，回收大概要多久。</li>
+<li><strong>Garbage-First</strong>：它会挑出那些**“垃圾最多、回收价值最大”**的 Region，优先回收它们，确保在 200ms 内搞定。不求扫完，只求不超时。</li>
+</ul>
+</li>
+</ul>
+<h1 id="JVM-层次-一个new-Object-从创建到GC的完整过程"><a href="#JVM-层次-一个new-Object-从创建到GC的完整过程" class="headerlink" title="JVM 层次 一个new Object 从创建到GC的完整过程"></a>JVM 层次 一个new Object 从创建到GC的完整过程</h1><p><strong>1.java对象的创建</strong></p>
+<ul>
+<li>查看类是否加载，未加载则加载类</li>
+<li>分配内存，对象初始化，<strong>Eden区</strong> 分配内存（除非对象过大直接进入老年代）。</li>
+</ul>
+<p>2.<strong>对象存活阶段</strong></p>
+<p>年轻代存活周期</p>
+<ul>
+<li>首次Minor GC：当Eden区满时触发 Minor GC：<ul>
+<li>标记存活对象：通过 可达性分析（Reachability Analysis） 判断对象是否被GC Roots引用。</li>
+<li>复制到Survivor区：存活对象被复制到 Survivor区（S0&#x2F;S1），年龄（Age）+1。</li>
+<li>清空Eden区：回收Eden区中不可达对象的内存。</li>
+</ul>
+</li>
+</ul>
+<p>Survivor区的晋升</p>
+<ul>
+<li>年龄阈值：对象每经历一次Minor GC且存活，年龄增加1。当年龄达到阈值（默认15，可通过 -XX:MaxTenuringThreshold 调整）时，晋升到 老年代（Old Generation）。</li>
+<li>动态年龄计算：若Survivor区中相同年龄对象的总大小超过Survivor区容量的一半，年龄≥该值的对象直接晋升老年代。</li>
+</ul>
+<p>对象不可达则进行垃圾回收</p>
+<h1 id="jvm内存区域，堆为什么要分成新生代和老年代"><a href="#jvm内存区域，堆为什么要分成新生代和老年代" class="headerlink" title="jvm内存区域，堆为什么要分成新生代和老年代"></a>jvm内存区域，堆为什么要分成新生代和老年代</h1><p>大多数 Java 对象“朝生暮死”，少数对象“命长”——基于这个特性，堆分代可以显著提高垃圾回收（GC）的效率。</p>
+<h1 id="栈内存泄漏和堆内存泄漏-JVM系列之六：内存溢出、内存泄漏-和-栈溢出-海米傻傻-博客园"><a href="#栈内存泄漏和堆内存泄漏-JVM系列之六：内存溢出、内存泄漏-和-栈溢出-海米傻傻-博客园" class="headerlink" title="栈内存泄漏和堆内存泄漏(JVM系列之六：内存溢出、内存泄漏 和 栈溢出 - 海米傻傻 - 博客园)"></a>栈内存泄漏和堆内存泄漏(<a target="_blank" rel="noopener" href="https://www.cnblogs.com/haimishasha/p/11329510.html">JVM系列之六：内存溢出、内存泄漏 和 栈溢出 - 海米傻傻 - 博客园</a>)</h1><p><strong>第一步：现象确认（怎么发现的？）</strong></p>
+<blockquote>
+<p>“首先，通常是运维监控（如Prometheus&#x2F;Zabbix）报警，发现线上服务<strong>堆内存（Heap）占用率持续上升</strong>。</p>
+<p>我会先通过监控或 jstat -gcutil <pid> 1000 观察 GC 情况。如果发生内存泄露，典型的特征是：<strong>频繁触发 Full GC，但 Old Gen（老年代）的占用率在 GC 后并没有明显下降，且底线在不断抬高</strong>。”</p>
+</blockquote>
+<p><strong>第二步：保留现场（怎么取证的？）</strong></p>
+<blockquote>
+<p>“确认是泄露后，我需要获取堆内存快照（Dump 文件）。</p>
+<ul>
+<li>如果是<strong>正在运行</strong>的服务，我会用 jmap -dump:live,format&#x3D;b,file&#x3D;heap.hprof <pid> 命令导出。注意加上 live 参数，只导出存活对象，减小文件体积。</li>
+<li>为了防止服务直接 OOM 挂掉没留现场，我们线上通常配置了 -XX:+HeapDumpOnOutOfMemoryError 参数，让 JVM 在崩溃前自动生成 Dump 文件。”</li>
+</ul>
+</blockquote>
+<p><strong>第三步：工具分析（核心步骤，重点讲 MAT）</strong></p>
+<blockquote>
+<p>“拿到 hprof 文件后，我会使用 <strong>Eclipse MAT (Memory Analyzer Tool)</strong> 进行分析，重点看三个地方：</p>
+<ol>
+<li><strong>看直方图 (Histogram)：</strong> 按 Retained Heap（深堆）倒序排列，看哪种类型的对象实例数量异常多，占用内存最大。</li>
+<li><strong>看支配树 (Dominator Tree)：</strong> 找出内存占用最大的对象实例（Big Object）。</li>
+<li><strong>查 GC Roots 引用链 (Path to GC Roots)：</strong> 这是最关键的一步。选中可疑的大对象，查看它到 GC Roots 的引用链（排除软&#x2F;弱&#x2F;虚引用）。</li>
+</ol>
+<p><strong>目的</strong>是找到：究竟是哪个静态变量、哪个线程或者哪个缓存容器，强引用了这个对象，导致它无法被回收。”</p>
+</blockquote>
+<p><strong>第四步：常见原因（展示知识储备）</strong></p>
+<blockquote>
+<p>“根据排查经验，找到引用链后，通常对应以下几种代码问题：</p>
+<ol>
+<li><strong>静态集合类滥用：</strong> 比如定义了 static Map 做缓存，只 put 不 remove，导致对象越积越多。</li>
+<li><strong>ThreadLocal 未清理：</strong> 在线程池场景下，使用 ThreadLocal 存数据，请求结束时忘记调用 remove()，导致线程复用时内存无法释放。</li>
+<li><strong>资源未关闭：</strong> 数据库连接、IO 流没在 finally 或 try-with-resources 中关闭。</li>
+<li><strong>内部类引用：</strong> 非静态内部类隐式持有外部类引用，导致外部类无法回收。”</li>
+</ol>
+</blockquote>
+<h1 id="本地缓存为什么不安全"><a href="#本地缓存为什么不安全" class="headerlink" title="本地缓存为什么不安全"></a>本地缓存为什么不安全</h1><h1 id="CPU飙升占用率过高排查-（linux-cpu飙高原因排查（有手就行）-linux-cpu故障注入报告-CSDN博客）"><a href="#CPU飙升占用率过高排查-（linux-cpu飙高原因排查（有手就行）-linux-cpu故障注入报告-CSDN博客）" class="headerlink" title="CPU飙升占用率过高排查&#x3D;&#x3D;（linux cpu飙高原因排查（有手就行）_linux cpu故障注入报告-CSDN博客）"></a>CPU飙升占用率过高排查&#x3D;&#x3D;（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33709582/article/details/121615696">linux cpu飙高原因排查（有手就行）_linux cpu故障注入报告-CSDN博客</a>）</h1><p>“遇到 CPU 飙高，我会按以下步骤排查：</p>
+<ol>
+<li><p><strong>先用 top</strong> 确认是哪个进程，并观察是用户态高还是内核态高。</p>
+</li>
+<li><p><strong>再用 top -H -p</strong> 找到最耗 CPU 的具体线程 ID，并转为十六进制。</p>
+</li>
+<li><p><strong>接着用 jstack</strong> 抓取堆栈，查看该线程在运行哪行代码。</p>
+</li>
+<li><p><strong>分析原因</strong>：</p>
+<ul>
+<li>如果是业务代码（RUNNABLE），检查是否有<strong>死循环、正则回溯</strong>或<strong>大数据量计算</strong>。</li>
+<li>如果是 GC 线程，结合 jstat 判断是否是 <strong>OOM 前兆导致的频繁 Full GC</strong>。</li>
+<li>如果是内核态高，检查是否<strong>线程数过多导致上下文切换</strong>。<br>最后根据具体原因，进行代码优化、SQL 优化或增加机器资源。”</li>
+<li>比如<mark>高并发下使用了 CAS</mark>（乐观锁&#x2F;自旋锁）。当锁竞争极度激烈时，大量线程在 while 循环里疯狂自旋重试（Spinning），不断消耗 CPU 计算资源却拿不到锁。</li>
+</ul>
+</li>
+<li><p>“CPU 飙高除了业务代码死循环，一个非常重要的可能性是 <mark><strong>JVM 在进行频繁的 Full GC</strong></mark>。</p>
+<p>这种情况通常是<strong>内存泄漏的征兆</strong>。当堆内存（特别是老年代）被占满，且大部分都是存活对象时，GC 线程会消耗大量 CPU 去尝试回收，但收效甚微，导致应用线程被长时间暂停，系统吞吐量急剧下降。</p>
+<p><strong>排查时</strong>，我会先用 <strong>jstat</strong> 确认 FGC 次数是否异常增多。如果确认是 GC 问题，下一步就是通过 <strong>jmap 导出 Heap Dump</strong>，再用 <strong>MAT 工具</strong>去分析是哪个对象导致的内存泄漏。”</p>
+</li>
+</ol>
+<h1 id="ZGC-极致八股文之JVM垃圾回收器G1-ZGC详解-新一代垃圾回收器ZGC的探索与实践-美团技术团队-从历代GC算法角度剖析ZGC"><a href="#ZGC-极致八股文之JVM垃圾回收器G1-ZGC详解-新一代垃圾回收器ZGC的探索与实践-美团技术团队-从历代GC算法角度剖析ZGC" class="headerlink" title="ZGC(极致八股文之JVM垃圾回收器G1&amp;ZGC详解)(新一代垃圾回收器ZGC的探索与实践 - 美团技术团队)(从历代GC算法角度剖析ZGC)"></a>ZGC(<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Ywj3XMws0IIK-kiUllN87Q">极致八股文之JVM垃圾回收器G1&amp;ZGC详解</a>)(<a target="_blank" rel="noopener" href="https://tech.meituan.com/2020/08/06/new-zgc-practice-in-meituan.html">新一代垃圾回收器ZGC的探索与实践 - 美团技术团队</a>)(<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/ExkB40cq1_Z0ooDzXn7CVw">从历代GC算法角度剖析ZGC</a>)</h1><p><strong>1. 核心定位与目标</strong></p>
+<ul>
+<li><strong>G1 (Garbage-First)</strong>：<ul>
+<li><strong>定位</strong>：<strong>全能型选手</strong>，旨在替代 CMS，成为服务端默认 GC。</li>
+<li><strong>目标</strong>：在<strong>吞吐量</strong>和<strong>延迟</strong>之间取得平衡。</li>
+<li><strong>JDK 版本</strong>：JDK 9 开始成为默认 GC。</li>
+<li><strong>适用堆大小</strong>：几 GB ~ 几十 GB（比如 6GB - 64GB）。</li>
+<li><strong>停顿时间 (STW)</strong>：可控（例如设定 200ms），但在进行 Full GC 或者 Mixed GC 的特定阶段，随着堆变大，停顿时间可能会增加。</li>
+</ul>
+</li>
+<li><strong>ZGC (Z Garbage Collector)</strong>：<ul>
+<li><strong>定位</strong>：<strong>极致低延迟</strong>（Low Latency）选手。</li>
+<li><strong>目标</strong>：<strong>停顿时间 &lt; 10ms</strong>（JDK 16 之前是 10ms，现在甚至能做到 &lt; 1ms），且<strong>停顿时间不随堆大小增加而增加</strong>。</li>
+<li><strong>JDK 版本</strong>：JDK 11 引入（实验），JDK 15 生产可用，JDK 21 分代 ZGC 成为主流。</li>
+<li><strong>适用堆大小</strong>：超大堆（几百 MB ~ 16TB）。即使是 16TB 的堆，停顿依然是毫秒级。</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 核心架构与原理区别（面试杀手锏）</strong></p>
+<p><strong>G1 的核心设计：Region + Remembered Set (RSet)</strong></p>
+<ol>
+<li><strong>物理分区</strong>：将堆划分为几千个大小相等的 <strong>Region</strong>。</li>
+<li><strong>逻辑分代</strong>：依然保留 Eden、Survivor、Old 的概念，但它们不再是物理隔离的，而是逻辑上的 Region 集合。</li>
+<li><strong>回收策略</strong>：<ul>
+<li><strong>Young GC</strong>：回收所有年轻代 Region（STW）。</li>
+<li><strong>Mixed GC</strong>：回收所有年轻代 + <strong>部分</strong>收益最高的老年代 Region（Garbage-First 的由来）。</li>
+</ul>
+</li>
+<li><strong>跨代引用</strong>：使用 <strong>RSet（记忆集）</strong> 记录“谁引用了我”。这需要写屏障（Write Barrier）维护，内存占用较大（约占堆的 5%~20%）。</li>
+</ol>
+<p><strong>ZGC 的核心设计：Region + 读屏障 + 染色指针</strong></p>
+<ol>
+<li><strong>物理分区</strong>：也有 Region（称为 ZPage），但大小是动态的（小、中、大三种）。</li>
+<li><strong>无分代（早期） -&gt; 分代（JDK 21+）</strong>：早期的 ZGC 不分代，全堆扫描；JDK 21 引入了分代 ZGC，性能大幅提升。</li>
+<li><strong>并发执行</strong>：ZGC 几乎所有阶段（标记、转移、重定位）都是<strong>并发</strong>的，只有初始标记等极短阶段需要 STW。</li>
+<li><strong>关键黑科技</strong>（ZGC 为什么能做到毫秒级停顿？）：<ul>
+<li><strong>染色指针 (Colored Pointers)</strong>：直接在 64 位对象的指针上存储元数据（如 Marked0, Marked1, Remapped），而不是在对象头上。这使得 ZGC 可以在不访问对象内存的情况下感知对象状态。</li>
+<li><strong>读屏障 (Load Barrier)</strong>：当你从堆里读取一个对象引用时，ZGC 会插入一段代码检查指针颜色。如果发现指针指向的对象已经被移动了（Relocated），读屏障会<strong>自动修正</strong>指针地址（自愈能力，Self-Healing）。</li>
+<li><strong>无 RSet</strong>：ZGC 不使用 RSet 处理跨代引用（分代 ZGC 使用了精简版的 RSet），大幅节省内存。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>ZGC采用的是标记-复制算法，不过ZGC做了改进，ZGC在标记，转移，重定位阶段基本是并发进行的,ZGC可以实现停顿时间小于10ms,ZGC分为以下几个阶段，初始标记,并发标记阶段，再标记阶段，并发转移准备阶段，初始转移阶段，并发转移阶段.与ZGC对比，G1的转移阶段完全STW的.</p>
+<p>ZGC采用了2个关键的技术：着色指针与读屏障，着色指针就是将一些信息存储在指针的技术，在64位地址中，有3个地址视图M0,M1,Remapped,在刚开始整个内存视图都是Remapped,在并发标记阶段,如果对象被GC标记线程或者应用线程访问过，那么就将对象的地址视图从Remapped调整为M0。标记阶段结束之后，对象的地址要么是M0视图，要么是Remapped,果对象的地址是M0视图，那么说明对象是活跃的；如果对象的地址是Remapped视图，说明对象是不活跃的。并发转移阶段,标记结束后就进入转移阶段，此时地址视图再次被设置为Remapped。如果对象被GC转移线程或者应用线程访问过，那么就将对象的地址视图从M0调整为Remapped。</p>
+<p>读屏障：就是对象的地址变化了，再次读指向这个对象的指针会重新映射到新地址。</p>
+<p>因为初始标记，并发标记，再标记阶段跟G1很像，我介绍一下并发预备重分配,初始迁移,并发迁移三个阶段</p>
+<p><strong>一、 转移准备 (Concurrent Prepare for Relocate)</strong></p>
+<ul>
+<li><strong>核心任务</strong>：选出“哪些页面（Page）需要回收？”</li>
+<li><strong>动作</strong>：<ol>
+<li><strong>选页</strong>：ZGC 扫描所有页面，根据页面里的垃圾比例，选出一批回收收益最高的页面，放入 <strong>Relocation Set (迁移集)</strong>。</li>
+<li><strong>建表</strong>：为这些选中的页面，预先分配 <strong>Forwarding Table (转发表)</strong>。这张表目前是空的，专门用来记录“旧地址 -&gt; 新地址”的映射。</li>
+</ol>
+</li>
+</ul>
+<p><strong>二、 初始迁移 (Relocate Start) —— <em>短暂 STW</em></strong></p>
+<p>这是 ZGC 整个过程中<strong>最关键的 STW 阶段</strong>。</p>
+<ul>
+<li><strong>核心任务</strong>：<strong>只</strong>迁移 <strong>GC Roots</strong> 直接引用的对象。</li>
+<li><strong>为什么只迁 Roots？</strong>：因为 Roots 数量很少，可以在极短时间内完成，保证 STW 时间极短（毫秒级）。</li>
+<li><strong>动作</strong>：<ol>
+<li>扫描 GC Roots。</li>
+<li>如果 Root 指向的对象在 Relocation Set 里 -&gt; <strong>立刻搬家</strong>（复制到新页） -&gt; <strong>立刻改名</strong>（更新 Root 指针为新地址） -&gt; <strong>记录案底</strong>（在 Forwarding Table 记录旧址到新址）。</li>
+<li>如果不在 Relocation Set -&gt; 不动。</li>
+</ol>
+</li>
+</ul>
+<p><strong>三、 并发迁移 (Concurrent Relocate) —— <em>重头戏</em></strong></p>
+<p>这是最耗时的阶段，但它和用户线程<strong>并发执行</strong>。</p>
+<ul>
+<li><strong>核心任务</strong>：迁移 <strong>堆中剩余的所有存活对象</strong>。</li>
+<li><strong>动作</strong>：<ol>
+<li>GC 线程遍历 Relocation Set 中的所有页面。</li>
+<li>把存活对象复制到新页面。</li>
+<li>在 Forwarding Table 中记录映射关系。</li>
+</ol>
+</li>
+<li><strong>关键点</strong>：页面里的对象搬空后，这个<strong>物理页面</strong>其实可以回收了，但 <strong>Forwarding Table 不能丢</strong>！因为还有很多堆里的普通对象（非 Root）手里拿着旧地址的票，还得靠这张表找新家。</li>
+</ul>
+<p><strong>四、 ZGC 的杀手锏：读屏障与指针自愈</strong></p>
+<p>这解释了你最后一段提到的场景：<strong>如果用户线程访问了一个还没来得及修正引用的对象怎么办？</strong></p>
+<ul>
+<li><strong>场景</strong>：<ul>
+<li>对象 A 已经被 GC 线程搬到了新地址（0x200），Forwarding Table 记了 0x100 -&gt; 0x200。</li>
+<li>但是，对象 B 里的字段 b.field 依然存着旧地址 0x100。</li>
+<li>此时，GC 线程还没来得及扫描 B。</li>
+<li><strong>用户线程</strong>突然要读 b.field。</li>
+</ul>
+</li>
+<li><strong>读屏障 (Read Barrier)</strong>：<ul>
+<li>ZGC 在用户线程<strong>读取引用</strong>的那一瞬间（Load 操作），会触发一段代码逻辑。</li>
+<li><strong>检查</strong>：看这个指针的<strong>颜色位 (Color Bits)</strong>。如果颜色不对（比如是 Remapped 之前的颜色），说明这个对象可能被搬走了。</li>
+<li><strong>修正 (Self-Healing)</strong>：<ol>
+<li>去查 Forwarding Table。</li>
+<li>发现 0x100 确实搬到了 0x200。</li>
+<li><strong>立刻更新</strong> b.field &#x3D; 0x200（这就是自愈）。</li>
+<li>返回新对象给用户。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="java虚拟线程-【Java虚拟线程】Java21、SpringBoot3中使用虚拟线程-java-虚拟线程-CSDN博客-（最好与协程对比一下）"><a href="#java虚拟线程-【Java虚拟线程】Java21、SpringBoot3中使用虚拟线程-java-虚拟线程-CSDN博客-（最好与协程对比一下）" class="headerlink" title="java虚拟线程(【Java虚拟线程】Java21、SpringBoot3中使用虚拟线程_java 虚拟线程-CSDN博客)（最好与协程对比一下）"></a>java虚拟线程(<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_53928179/article/details/136785009">【Java虚拟线程】Java21、SpringBoot3中使用虚拟线程_java 虚拟线程-CSDN博客</a>)（最好与协程对比一下）</h1><p>虚拟线程在等待 I&#x2F;O 操作完成时不会阻塞底层的平台线程。JVM 会自动将该虚拟线程“卸载”，让平台线程去执行其他就绪的虚拟线程。当 I&#x2F;O 操作完成后，虚拟线程会再次被“挂载”到平台线程上继续执行。</p>
+<p>下图可以用来表示使用虚拟线程和平台线程（线程池）执行并发任务的区别：</p>
+<p><img src="/../../../img/blog/image-20260410163236183.png" srcset="/img/loading.gif" lazyload alt="image-20260410163236183"></p>
+<p>图1-1 线程池处理并发任务</p>
+<p><img src="/../../../img/blog/image-20260410163245029.png" srcset="/img/loading.gif" lazyload alt="image-20260410163245029"></p>
+<h1 id="JVM-调优思路-面试官：如何进行-JVM-调优（附真实案例）-知乎"><a href="#JVM-调优思路-面试官：如何进行-JVM-调优（附真实案例）-知乎" class="headerlink" title="JVM 调优思路(面试官：如何进行 JVM 调优（附真实案例） - 知乎)"></a><mark>JVM 调优思路(<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/488615913">面试官：如何进行 JVM 调优（附真实案例） - 知乎</a>)</mark></h1><p><strong>一、 核心方法论（展现你的系统化思维）</strong></p>
+<p>你可以先总起一句：“在我的经验中，JVM 调优从来都不是为了调优而调优，而是<strong>由问题驱动的</strong>。通常分为<strong>事前规划</strong>和<strong>事后排查</strong>两个阶段。”</p>
+<p><strong>1. 事前规划（容量评估与参数设置）</strong></p>
+<ul>
+<li><strong>内存分配</strong>：根据业务场景（是高并发的短生命周期对象多，还是需要缓存的大对象多）来预估内存。例如，通常会将 -Xms 和 -Xmx 设置为相同的值，避免 JVM 运行期间频繁扩容&#x2F;缩容带来的性能抖动。</li>
+<li><strong>垃圾回收器选择</strong>：<ul>
+<li>如果是吞吐量优先的后台计算服务，可能选择 <strong>Parallel GC</strong>。</li>
+<li>如果是延迟敏感的 Web 接口服务，通常选择 <strong>G1 GC</strong>（或者 JDK 11+ 的 <strong>ZGC</strong>）。</li>
+</ul>
+</li>
+<li><strong>元空间（Metaspace）</strong>：给 -XX:MaxMetaspaceSize 设定一个合理的上限，防止因为动态生成类（如 CGLIB 代理、Groovy 脚本）过多导致直接内存溢出（OOM）而拖垮整个物理机。</li>
+</ul>
+<p><strong>2. 事后排查（发现问题 -&gt; 定位瓶颈 -&gt; 实施优化）</strong></p>
+<ul>
+<li><strong>监控报警（发现问题）</strong>：通过 Prometheus + Grafana 等监控大盘，发现 CPU 飙高、接口响应变慢（RT 增加）、或者收到了 OOM 的报警。</li>
+<li><strong>收集现场数据（定位瓶颈）</strong>：<ul>
+<li><strong>GC 日志</strong>：通过分析 GC 日志（使用 GCViewer 或 GCEasy 等工具），看是 Minor GC 太频繁，还是触发了 Full GC，或者是 GC 停顿时间（Stop The World, STW）太长。</li>
+<li><strong>内存快照（Heap Dump）</strong>：当发生 OOM 时，通过 -XX:+HeapDumpOnOutOfMemoryError 自动生成的 dump 文件。</li>
+<li><strong>线程快照（Thread Dump）</strong>：使用 jstack 查看是否有死锁，或者大量线程处于 BLOCKED 或 WAITING 状态。</li>
+</ul>
+</li>
+<li><strong>分析与解决（实施优化）</strong>：使用 MAT (Memory Analyzer Tool) 或 JProfiler 分析 Dump 文件，找出占用内存最大的对象是谁产生的（GC Root 引用链），然后去修改业务代码，或者调整 JVM 参数。</li>
+</ul>
+<p><strong>二、 经典实战案例（准备 1-2 个讲给面试官听）</strong></p>
+<p>你需要根据你的实际情况，准备一个故事。以下提供两个最典型的场景供你参考和修改。</p>
+<p><strong>案例 1：频繁 Full GC 导致接口响应超时（CPU 飙高）</strong></p>
+<ul>
+<li><strong>背景&#x2F;现象</strong>：线上某个核心接口偶尔会大面积超时，监控显示该服务器的 CPU 使用率在某个时段会突然飙升到近 100%。</li>
+<li><strong>排查过程</strong>：<ol>
+<li>首先查看监控面板，发现 CPU 飙高的同时，<strong>Full GC 的次数非常频繁</strong>，且每次 Full GC 的停顿时间（STW）长达好几秒。</li>
+<li>我立刻把这台机器隔离（摘掉流量），然后下载了当时的 <strong>GC 日志</strong>。</li>
+<li>分析 GC 日志发现，老年代（Old Generation）的空间在每次 Full GC 后并没有明显下降。这说明有<strong>大量存活的对象进入了老年代，并且无法被回收</strong>。</li>
+<li>接着，我使用 jmap -dump:format&#x3D;b,file&#x3D;heap.hprof <pid> 命令导出了当时的<strong>内存快照（Heap Dump）</strong>。</li>
+<li>把 Dump 文件导入到 <strong>MAT (Memory Analyzer Tool)</strong> 中进行分析。使用 “Leak Suspects”（泄漏嫌疑人）功能，发现有一个 List 集合占用了将近 70% 的堆内存。</li>
+</ol>
+</li>
+<li><strong>根本原因</strong>：顺着这个 List 的 GC Root 引用链找下去，发现是业务代码中有一个定时任务。这个任务每次执行都会从数据库捞取几万条数据进行处理，处理完后，本应该把这些对象释放掉，但因为<strong>代码逻辑错误，把这些对象塞进了一个全局的静态 List 中（或者 ThreadLocal 忘记 remove）</strong>，导致对象一直强引用存活，最终塞满了老年代，引发疯狂的 Full GC。</li>
+<li><strong>解决方案</strong>：<ol>
+<li><strong>代码层面</strong>：修复 Bug，将全局静态 List 改为局部变量，确保方法执行完后，对象能变成不可达状态，从而在 Minor GC 时就被回收掉。对于 ThreadLocal，确保在 finally 块中调用 remove()。</li>
+<li><strong>JVM 层面（锦上添花）</strong>：在修复代码后，我重新评估了对象的晋升年龄阈值（-XX:MaxTenuringThreshold），将其适当调大，让那些短命的对象在年轻代（Survivor 区）多待一会儿，尽可能在 Minor GC 时被干掉，避免过早进入老年代。</li>
+</ol>
+</li>
+</ul>
+<p><strong>案例 2：大对象直接进入老年代导致的 Full GC（内存分代不合理）</strong></p>
+<ul>
+<li><strong>背景&#x2F;现象</strong>：系统并没有明显的内存泄漏，但监控发现<strong>每天都会发生几次规律的 Full GC</strong>，导致短暂卡顿。</li>
+<li><strong>排查过程</strong>：<ol>
+<li>观察 GC 日志，发现年轻代（Eden + Survivor）的 Minor GC 频率正常，但<strong>老年代的内存占用在持续、快速地增长</strong>，直到触发 Full GC。</li>
+<li>使用 jstat -gcutil <pid> 1000 实时观察，发现每次发生 Minor GC 时，Survivor 区并没有怎么被使用，而老年代的占用量却大幅增加。</li>
+</ol>
+</li>
+<li><strong>根本原因（分析）</strong>：这通常是因为<strong>年轻代分配的空间太小</strong>，或者<strong>业务中存在较大的对象（如大数组、大报表文件、长字符串）</strong>。<ul>
+<li>当 Eden 区满了触发 Minor GC 时，存活的对象（哪怕是短命的大对象）由于 Survivor 区放不下，<strong>触发了空间分配担保机制，直接被送入了老年代</strong>。</li>
+<li>或者对象的大小直接超过了 -XX:PretenureSizeThreshold 的设置，直接在老年代分配。</li>
+</ul>
+</li>
+<li><strong>解决方案（调优过程）</strong>：<ol>
+<li><strong>调整年轻代比例</strong>：通过 -Xmn 参数适当<strong>增大年轻代（Young Gen）的总大小</strong>，同时调整 -XX:SurvivorRatio（Eden 与 Survivor 的比例，默认是 8:1:1）。目的是让 Survivor 区有足够的空间容纳 Minor GC 后存活的临时大对象。</li>
+<li><strong>业务优化</strong>：检查代码，发现某个导出 Excel 报表的接口，一次性把几十万条记录全部加载到了内存里的一个大 List 中。我将这个接口改成了<strong>分页查询 + 流式写入（如 EasyExcel）</strong>，从根源上消除了这个“大对象”的产生。</li>
+</ol>
+</li>
+<li><strong>结果</strong>：经过调整后，短命的大对象在年轻代就被成功回收，老年代的增长极其缓慢，规律性的 Full GC 彻底消失。</li>
+</ul>
+<h1 id="介绍一下Java的常量池（JAVA常量池，一篇文章就足够入门了。（含图解）-javaclass常量池-CSDN博客）"><a href="#介绍一下Java的常量池（JAVA常量池，一篇文章就足够入门了。（含图解）-javaclass常量池-CSDN博客）" class="headerlink" title="介绍一下Java的常量池（JAVA常量池，一篇文章就足够入门了。（含图解）_javaclass常量池-CSDN博客）"></a><mark>介绍一下Java的常量池（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41376740/article/details/80338158">JAVA常量池，一篇文章就足够入门了。（含图解）_javaclass常量池-CSDN博客</a>）</mark></h1><p> 类常量池的组成：</p>
+<ul>
+<li><strong>常量池项</strong>：包括各种常量，例如字符串字面量、常量数值、类、方法、字段的符号引用。</li>
+<li><strong>符号引用</strong>：用于指向其他类、方法或字段的名称，可以通过解析这些符号引用来获得实际的内存地址。</li>
+</ul>
+<h1 id="java内存模型是咋样的？（-一-玩命死磕Java内存模型（JMM）与Volatile关键字底层原理引言-本篇文章结合我个人对Java内存模型的理解-掘金）"><a href="#java内存模型是咋样的？（-一-玩命死磕Java内存模型（JMM）与Volatile关键字底层原理引言-本篇文章结合我个人对Java内存模型的理解-掘金）" class="headerlink" title="java内存模型是咋样的？（(一)玩命死磕Java内存模型（JMM）与Volatile关键字底层原理引言 本篇文章结合我个人对Java内存模型的理解 - 掘金）"></a>java内存模型是咋样的？（<a target="_blank" rel="noopener" href="https://juejin.cn/post/6977323236186914852?searchId=20250701163716CEA3B61EDAC50A6BC755#heading-24">(一)玩命死磕Java内存模型（JMM）与Volatile关键字底层原理引言 本篇文章结合我个人对Java内存模型的理解 - 掘金</a>）</h1><p><strong>一句话总结</strong>：<br>JMM 是一套<strong>抽象的规范</strong>，它屏蔽了底层不同 CPU 架构和操作系统的内存访问差异，为 Java 程序员提供了一个<strong>统一的、可预测的</strong>内存视图，<mark>确保在多线程环境下能正确地处理共享变量的读写问题。</mark></p>
+<p>它定义了一套规则来保证<strong>可见性 (Visibility)</strong>、<strong>原子性 (Atomicity)</strong> 和 <strong>有序性 (Ordering)</strong>。</p>
+<p><strong>2. JMM 的抽象结构</strong></p>
+<p>JMM 并没有规定物理内存怎么划分，而是定义了一个抽象模型：</p>
+<ol>
+<li><strong>主内存 (Main Memory)</strong>：<ul>
+<li>所有<strong>实例字段</strong>、<strong>静态字段</strong>、<strong>数组元素</strong>都存在这里。</li>
+<li>它是所有线程<strong>共享</strong>的。</li>
+</ul>
+</li>
+<li><strong>工作内存 (Working Memory)</strong>：<ul>
+<li>每个线程都有自己<strong>私有</strong>的工作内存。</li>
+<li>它存储了该线程需要用到的变量的<strong>副本</strong>（从主内存拷贝来的）。</li>
+<li><strong>关键</strong>：线程对变量的所有操作（读、写）都<strong>必须</strong>在自己的工作内存中进行，<strong>不能直接读写主内存</strong>。</li>
+</ul>
+</li>
+</ol>
+<p><strong>3. JMM 的三大特性</strong></p>
+<p><strong>A. 原子性 (Atomicity)</strong></p>
+<ul>
+<li><strong>定义</strong>：一个操作是不可分割、不可中断的。</li>
+<li><strong>例子</strong>：int i &#x3D; 1; 是原子的。但 i++; 不是（它分三步：读-改-写）。</li>
+<li><strong>保障</strong>：synchronized, Lock, Atomic 原子类。</li>
+</ul>
+<p><strong>B. 可见性 (Visibility)</strong></p>
+<ul>
+<li><strong>定义</strong>：当一个线程修改了共享变量的值，其他线程能够<strong>立即</strong>得知这个修改。</li>
+<li><strong>保障</strong>：<ul>
+<li>volatile: <strong>强制</strong>每次读都从主内存读，每次写都立刻刷回主内存。</li>
+<li>synchronized: 解锁前会把工作内存刷回主内存。</li>
+<li>final: 一旦初始化完成，对其他线程可见。</li>
+</ul>
+</li>
+</ul>
+<p><strong>C. 有序性 (Ordering)</strong></p>
+<ul>
+<li><strong>问题</strong>：为了性能，编译器和 CPU 可能会进行<strong>指令重排序 (Reordering)</strong>。在单线程下没问题，但在多线程下可能导致逻辑错误。</li>
+<li><strong>保障</strong>：<ul>
+<li>volatile: 内部通过<strong>内存屏障 (Memory Barrier)</strong> 禁止指令重排。</li>
+<li>synchronized: 一个变量在同一个时刻只允许一个线程对其进行 lock 操作，保证了持有同一个锁的两个同步块只能串行执行。</li>
+<li><strong>Happens-Before 原则</strong>: 这是 JMM 定义的“先行发生”规则，是判断是否存在数据竞争、代码是否线程安全的主要依据。</li>
+</ul>
+</li>
+</ul>
+<p><strong>4. Happens-Before 原则 (面试重点)</strong></p>
+<p>如果操作 A happens-before 操作 B，那么 A 的执行结果对 B 是可见的。<br>核心规则有：</p>
+<ol>
+<li><strong>程序次序规则</strong>：一个线程内，代码写的顺序在前的操作 happens-before 后面的。</li>
+<li><strong>volatile 规则</strong>：对一个 volatile 变量的<strong>写</strong>操作，happens-before 后面对这个变量的<strong>读</strong>。</li>
+<li><strong>锁规则</strong>：一个锁的<strong>解锁</strong> (unlock) 操作，happens-before 后面对这个锁的<strong>加锁</strong> (lock)。</li>
+<li><strong>传递性</strong>：A happens-before B, B happens-before C, 那么 A happens-before C。</li>
+</ol>
+<h1 id="new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）"><a href="#new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）" class="headerlink" title="new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）"></a>new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）</h1><h1 id="TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread-Local-Allocation-Buffer）-CSDN博客）"><a href="#TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread-Local-Allocation-Buffer）-CSDN博客）" class="headerlink" title="TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread Local Allocation Buffer）-CSDN博客）"></a>TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qghurt/article/details/107289843">TLAB（Thread Local Allocation Buffer）-CSDN博客</a>）</h1><h1 id="大对象具体是如何进入老年代的"><a href="#大对象具体是如何进入老年代的" class="headerlink" title="大对象具体是如何进入老年代的"></a>大对象具体是如何进入老年代的</h1><p><img src="/../../../img/blog/image-20260107110019006-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110019006"></p>
+<p><img src="/../../../img/blog/image-20260107110132399-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110132399"></p>
+<p><img src="/../../../img/blog/image-20260107110159056-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110159056"></p>
+<h1 id="内存分配担保机制"><a href="#内存分配担保机制" class="headerlink" title="内存分配担保机制"></a><strong>内存分配担保机制</strong></h1><p><img src="/../../../img/blog/image-20260107111042385-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107111042385"></p>
+<p><img src="/../../../img/blog/image-20260107111316969-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107111316969"></p>
+<p><img src="/../../../img/blog/image-20260107110852695-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110852695"></p>
+<p><img src="/../../../img/blog/image-20260107110915889-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110915889"></p>
+<h1 id="内存泄露排查的方法"><a href="#内存泄露排查的方法" class="headerlink" title="内存泄露排查的方法"></a>内存泄露排查的方法</h1><p><img src="/../../../img/blog/image-20260109231003665-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260109231003665"></p>
+<h1 id="jvm常用参数有哪些"><a href="#jvm常用参数有哪些" class="headerlink" title="jvm常用参数有哪些"></a><mark>jvm常用参数有哪些</mark></h1><p><strong>一、 堆内存设置（最常用）</strong></p>
+<p>这部分决定了应用能吞吐多少数据，以及 GC 的频率。</p>
+<ol>
+<li><strong>-Xms</strong>：初始堆内存大小。</li>
+<li><strong>-Xmx</strong>：最大堆内存大小。<ul>
+<li><strong>专业建议</strong>：通常将 -Xms 和 -Xmx <strong>设为相等</strong>，以防止 JVM 在运行时因频繁调整堆大小（Resizing）带来的性能抖动。</li>
+</ul>
+</li>
+<li><strong>-Xmn</strong>：设置年轻代（Young Generation）的大小。通常设为堆总大小的 1&#x2F;3 或 1&#x2F;4。</li>
+<li><strong>-XX:NewRatio</strong>：老年代与年轻代的比例。例如 -XX:NewRatio&#x3D;2 表示 老年代:年轻代 &#x3D; 2:1。</li>
+<li><strong>-XX:SurvivorRatio</strong>：Eden 区与一个 Survivor 区的比例。默认是 8，即 Eden:S0:S1 &#x3D; 8:1:1。</li>
+</ol>
+<p><strong>二、 非堆与栈设置</strong></p>
+<ol>
+<li><strong>-XX:MetaspaceSize</strong> &#x2F; <strong>-XX:MaxMetaspaceSize</strong>（JDK 8+）：<ul>
+<li>元空间（存储类信息、常量池）。建议设置最大值，防止类加载过多导致耗尽宿主机物理内存。</li>
+</ul>
+</li>
+<li><strong>-Xss</strong>：每个线程的栈大小。<ul>
+<li>默认通常是 1MB。如果方法调用深度很深（如递归），需调大；如果线程极多，可适当调小（如 256k）以节省内存。</li>
+</ul>
+</li>
+</ol>
+<p><strong>三、 垃圾回收器（GC）相关</strong></p>
+<p>根据业务场景（低延迟 vs 高吞吐）选择合适的收集器。</p>
+<ol>
+<li><strong>指定收集器</strong>：<ul>
+<li><strong>-XX:+UseG1GC</strong>：开启 G1 收集器（目前主流，适合 4G-64G 堆内存）。</li>
+<li><strong>-XX:+UseZGC</strong>：开启 ZGC 收集器（JDK 11+ 引入，低延迟神器，停顿 &lt; 1ms）。</li>
+<li><strong>-XX:+UseConcMarkSweepGC</strong>：开启 CMS 收集器（已过时，但在老系统中常见）。</li>
+</ul>
+</li>
+<li><strong>GC 调优参数</strong>：<ul>
+<li><strong>-XX:MaxGCPauseMillis</strong>：设置最大 GC 停顿时间目标（G1 核心参数）。</li>
+<li><strong>-XX:ParallelGCThreads</strong>：并行 GC 时使用的 CPU 核心数。</li>
+</ul>
+</li>
+</ol>
+<p><strong>四、 线上排障与诊断（生产环境必配）</strong></p>
+<p><strong>这部分是体现经验的关键。</strong></p>
+<ol>
+<li><strong>-XX:+HeapDumpOnOutOfMemoryError</strong>：当发生 OOM 时，自动生成堆转储文件（Dump 文件）。</li>
+<li><strong>-XX:HeapDumpPath&#x3D;&#x2F;path&#x2F;to&#x2F;dump</strong>：指定 Dump 文件的存放位置。</li>
+<li><strong>-XX:+PrintGCDetails</strong> &#x2F; <strong>-XX:+PrintGCDateStamps</strong>（JDK 8）：打印详细 GC 日志。</li>
+<li><strong>-Xlog:gc*</strong>（JDK 9+）：新的统一日志管理命令。</li>
+<li><strong>-XX:OnOutOfMemoryError</strong>：OOM 后执行的脚本（例如重启服务或发送告警通知）。</li>
+</ol>
+<p>“我在生产环境中通常会遵循 <strong>‘稳定优先’</strong> 的原则：</p>
+<ol>
+<li>首先，我会把 <strong>-Xms 和 -Xmx 设为一致</strong>（比如 4G），防止堆内存抖动。</li>
+<li>针对 Web 应用，我会优先选择 <strong>G1 收集器</strong> (-XX:+UseG1GC)，并设置一个合理的停顿时间目标（比如 200ms）。</li>
+<li><strong>最重要的是诊断参数</strong>：我一定会配置 <strong>-XX:+HeapDumpOnOutOfMemoryError</strong>。这样一旦线上发生内存泄漏导致 OOM，我能第一时间拿到 Dump 文件，通过 MAT 或 VisualVM 进行离线分析，定位是哪个类占用了过多内存。”</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%AD%E8%A8%80/" class="category-chain-item">语言</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%AD%E8%A8%80/Java/" class="category-chain-item">Java</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/JVM/" class="print-no-link">#JVM</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>JVM</div>
+      <div>https://kyy-logs.github.io/2026/04/09/语言/java/JVM/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yangyang Kong</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年4月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/" title="IO与网络">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">IO与网络</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="Java基础语法">
+                        <span class="hidden-mobile">Java基础语法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"kyy-logs/review-repository","repo-id":"R_kgDOR9LLEQ","category":"General","category-id":"DIC_kwDOR9LLEc4C6Yb2","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"bottom","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

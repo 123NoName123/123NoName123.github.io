@@ -1,0 +1,1507 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
+  <link rel="icon" href="/img/cat.ico">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yangyang Kong">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="单例模式有几种？懒汉式单例存在什么问题？单例模式的使用场景？1.懒汉式单例（Lazy Initialization） 1.1 线程不安全的懒汉式单例 123456789101112public class Singleton &#123;    private static Singleton instance;    private Singleton() &#123;&#125;    pub">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java基础语法">
+<meta property="og:url" content="https://kyy-logs.github.io/2026/04/09/%E8%AF%AD%E8%A8%80/java/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="多云的小站">
+<meta property="og:description" content="单例模式有几种？懒汉式单例存在什么问题？单例模式的使用场景？1.懒汉式单例（Lazy Initialization） 1.1 线程不安全的懒汉式单例 123456789101112public class Singleton &#123;    private static Singleton instance;    private Singleton() &#123;&#125;    pub">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250624235901461.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-01.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-02.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-03.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-04.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-05.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-06.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250405151525848.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250414151417619.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/jbxyf-remote-07.jpg">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250316162552210.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260307105614220.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250916225616548.png">
+<meta property="article:published_time" content="2026-04-09T14:28:06.000Z">
+<meta property="article:modified_time" content="2026-04-11T02:05:19.918Z">
+<meta property="article:author" content="Yangyang Kong">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="基础">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kyy-logs.github.io/img/blog/image-20250624235901461.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Java基础语法 - 多云的小站</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kyy-logs.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":null,"loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>多云的小站</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-code-fill"></i>
+                <span>语言</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/language/java/" target="_self">
+                    <i class="iconfont icon-tags-fill"></i>
+                    <span>Java</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/language/spring/" target="_self">
+                    <i class="iconfont icon-tags-fill"></i>
+                    <span>Spring</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-database-fill"></i>
+                <span>数据库</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/database/mysql/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>MySQL</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/database/redis/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>Redis</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/mq/" target="_self">
+                <i class="iconfont icon-interactive-fill"></i>
+                <span>消息队列</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                <span>计算机基础</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>计算机网络</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>操作系统</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/algorithm/" target="_self">
+                <i class="iconfont icon-launch-fill"></i>
+                <span>算法</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/scenario/" target="_self">
+                <i class="iconfont icon-project-fill"></i>
+                <span>场景题</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/opensource/" target="_self">
+                <i class="iconfont icon-github-fill"></i>
+                <span>开源项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java基础语法"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-04-09 22:28" pubdate>
+          2026年4月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          15k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          129 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java基础语法</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="单例模式有几种？懒汉式单例存在什么问题？单例模式的使用场景？"><a href="#单例模式有几种？懒汉式单例存在什么问题？单例模式的使用场景？" class="headerlink" title="单例模式有几种？懒汉式单例存在什么问题？单例模式的使用场景？"></a>单例模式有几种？懒汉式单例存在什么问题？单例模式的使用场景？</h1><p>1.<strong>懒汉式单例（Lazy Initialization）</strong></p>
+<p>1.1 线程不安全的懒汉式单例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Singleton</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Singleton instance;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-title function_">Singleton</span><span class="hljs-params">()</span> &#123;&#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Singleton <span class="hljs-title function_">getInstance</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">if</span> (instance == <span class="hljs-literal">null</span>) &#123;<br>            instance = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Singleton</span>();<br>        &#125;<br>        <span class="hljs-keyword">return</span> instance;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>问题</strong>：这种实现方式在多线程环境下是不安全的。如果多个线程同时执行 <code>instance == null</code> 时，会创建多个实例。</p>
+<p>1.2 <strong>双重检查锁定（Double-Checked Locking）</strong></p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs smali">public class Singleton &#123;<br>   <span class="hljs-keyword"> private</span><span class="hljs-keyword"> static</span> volatile Singleton instance;<br><br>   <span class="hljs-keyword"> private</span> Singleton() &#123;&#125;<br><br>   <span class="hljs-keyword"> public</span><span class="hljs-keyword"> static</span> Singleton getInstance() &#123;<br>       <span class="hljs-built_in"> if </span>(instance == null) &#123;<br>            synchronized (Singleton.class) &#123;<br>               <span class="hljs-built_in"> if </span>(instance == null) &#123;<br>                   <span class="hljs-built_in"> instance </span>=<span class="hljs-built_in"> new </span>Singleton();<br>                &#125;<br>            &#125;<br>        &#125;<br>       <span class="hljs-built_in"> return </span>instance;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p><strong>优点</strong>：只有在 <code>instance</code> 为 <code>null</code> 时才加锁，避免了每次访问时都加锁的性能问题。使用 <code>volatile</code> 确保线程可见性。</p>
+<p>注意：instance用了volatile关键字修饰，可以保证变量在多线程的可见性以及指令重排序问题。instance &#x3D; new Singleton()代码其实是分为三步执行：</p>
+<p>1.为 <code>Instance</code> 分配内存空间</p>
+<p>2.初始化 <code>uniqueInstance</code></p>
+<p>3.将 <code>Instance</code> 指向分配的内存地址</p>
+<p>但是由于 JVM 具有指令重排的特性，执行顺序有可能变成 1-&gt;3-&gt;2。指令重排在单线程环境下不会出现问题，但是在多线程环境下会导致一个线程获得还没有初始化的实例。例如，线程 T1 执行了 1 和 3，此时 T2 调用 <code>getUniqueInstance</code>() 后发现 <code>uniqueInstance</code> 不为空，因此返回 <code>uniqueInstance</code>，但此时 <code>uniqueInstance</code> 还未被初始化,所以需要volatile禁止指令重排序</p>
+<p><strong>2.饿汉式单例（Eager Initialization）</strong></p>
+<p><strong>饿汉式单例</strong>在类加载时就创建实例，线程安全，且不需要进行懒加载的同步。</p>
+<p>2.1 饿汉式单例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Singleton</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">Singleton</span> <span class="hljs-variable">instance</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Singleton</span>();<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-title function_">Singleton</span><span class="hljs-params">()</span> &#123;&#125;	<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Singleton <span class="hljs-title function_">getInstance</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> instance;<br>    &#125;<br>&#125;<br>线程安全<br></code></pre></td></tr></table></figure>
+
+<p><strong>3 静态内部类实现（Bill Pugh Singleton）</strong></p>
+<p>这种方式是通过静态内部类的方式来实现懒加载，并且保证线程安全。静态内部类只有在 <code>getInstance()</code> 被调用时才会加载，并且由于类加载时是线程安全的，所以无需加锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Singleton</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-title function_">Singleton</span><span class="hljs-params">()</span> &#123;&#125;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SingletonHelper</span> &#123;<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">Singleton</span> <span class="hljs-variable">INSTANCE</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Singleton</span>();<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Singleton <span class="hljs-title function_">getInstance</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> SingletonHelper.INSTANCE;<br>    &#125;<br>&#125;<br>静态内部类不会随着外部类的加载而加载,访问到才加载，实现了延迟加载，类似于懒汉式<br>外部类加载： 当你第一次使用 Singleton.getInstance() 时，外部类 Singleton 会被加载。<br><br>静态内部类加载： 在访问 SingletonHelper.INSTANCE 时，静态内部类 SingletonHelper 才会被加载并初始化。<br><br>实例化： 在 SingletonHelper 被加载的过程中，INSTANCE 会被实例化，并且 JVM 会保证这个实例在 JVM 进程中唯一且线程安全。<br></code></pre></td></tr></table></figure>
+
+<p>优点：既保证了懒加载，又保证了线程安全，并且性能更高。类加载时，SingletonHelper 类不会立即加载，只有在调用 getInstance() 时才会加载。</p>
+<hr>
+<p><strong>使用场景</strong></p>
+<p><strong>1. 节省资源 (Resource Saving)</strong></p>
+<p>当对象的<strong>创建成本很高</strong>时，使用单例可以确保它只被创建一次，然后被反复使用，避免性能浪费。</p>
+<ul>
+<li><strong>场景举例</strong>：<ul>
+<li><mark><strong>数据库连接池</strong></mark></li>
+<li><strong>线程池</strong></li>
+<li><strong>重量级的配置对象或缓存</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>2. 保证唯一性与协同 (Ensuring Uniqueness &amp; Coordination)</strong></p>
+<p>当一个类必须作为<strong>全局唯一的“总管”或“协调者”</strong>，以确保所有操作都通过它来同步和管理时，必须使用单例。</p>
+<ul>
+<li><strong>场景举例</strong>：<ul>
+<li><strong>应用程序的配置管理器</strong></li>
+<li><mark><strong>日志管理器</strong></mark></li>
+<li><strong>Spring 的 ApplicationContext 容器</strong></li>
+<li><strong>操作系统的窗口管理器</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>3. 无状态工具 (Stateless Utilities)</strong></p>
+<p>当一个类是<strong>无状态的</strong>（即不包含可变的成员变量），它的功能完全由输入参数决定时，创建一个共享的单例实例就足够了，可以节省内存。</p>
+<ul>
+<li><strong>场景举例</strong>：<ul>
+<li><strong>Spring 中的 @Service, @Repository, @Controller</strong></li>
+<li>只提供计算或操作方法的工具类</li>
+</ul>
+</li>
+</ul>
+<h1 id="Java的三大特性？多态是怎么体现的？"><a href="#Java的三大特性？多态是怎么体现的？" class="headerlink" title="Java的三大特性？多态是怎么体现的？"></a>Java的三大特性？多态是怎么体现的？</h1><p>封装，继承，多态</p>
+<p>多态：同一个方法调用，在不同对象上表现出不同的行为。</p>
+<p>即：<strong>父类引用指向子类对象，调用的是子类的重写方法。</strong></p>
+<p>父类引用调用子类方法，实现“接口统一，行为多样”，是高可扩展性的重要基础。</p>
+<p><strong>二、多态的三个前提（Java）</strong></p>
+<ol>
+<li>有继承关系</li>
+<li>子类重写父类方法</li>
+<li>父类引用指向子类对象</li>
+</ol>
+<p><strong>“多态主要分为静态多态和动态多态。</strong></p>
+<ol>
+<li><strong>静态多态</strong>指的是<strong>方法重载</strong>，在编译期通过参数列表决定调用。</li>
+<li><strong>动态多态</strong>指的是<strong>方法重写</strong>，它是 OOP 的灵魂。通过‘父类引用指向子类对象’，程序在运行时根据对象的实际类型动态查找虚方法表。</li>
+</ol>
+<h1 id="基本类型和包装类的区别（【Java基础】基本类型和包装类的区别-java包装类和基本数据类型的区别-CSDN博客）"><a href="#基本类型和包装类的区别（【Java基础】基本类型和包装类的区别-java包装类和基本数据类型的区别-CSDN博客）" class="headerlink" title="基本类型和包装类的区别（【Java基础】基本类型和包装类的区别_java包装类和基本数据类型的区别-CSDN博客）"></a>基本类型和包装类的区别（<a target="_blank" rel="noopener" href="https://blog.csdn.net/yuxiangdeming/article/details/122838074">【Java基础】基本类型和包装类的区别_java包装类和基本数据类型的区别-CSDN博客</a>）</h1><h1 id="String，StringBuilder，StringBuffer的区别，String类不可变性-以及设置为不可变的优点有哪些"><a href="#String，StringBuilder，StringBuffer的区别，String类不可变性-以及设置为不可变的优点有哪些" class="headerlink" title="String，StringBuilder，StringBuffer的区别，String类不可变性 以及设置为不可变的优点有哪些"></a>String，StringBuilder，StringBuffer的区别，String类不可变性 以及设置为不可变的优点有哪些</h1><table>
+<thead>
+<tr>
+<th></th>
+<th>String</th>
+<th>StringBuffer</th>
+<th>StringBuilder</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>执行速度</td>
+<td>最差</td>
+<td>其次</td>
+<td>最高</td>
+</tr>
+<tr>
+<td>线程安全</td>
+<td>线程安全</td>
+<td>线程安全（方法用synchronized修饰）</td>
+<td>线程不安全</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>少量字符串操作</td>
+<td>多线程环境下的大量操作</td>
+<td>单线程环境下的大量操作</td>
+</tr>
+</tbody></table>
+<p><strong>不可变性：</strong></p>
+<p><code>String</code> 内部使用的是一个 <strong><code>final char[] value</code></strong> 数组（JDK 8 及以前），该数组一旦被赋值，引用就不能更改；</p>
+<p><strong>优点：</strong></p>
+<ol>
+<li><strong>线程安全</strong>   <strong>2. 可以被缓存（字符串常量池）</strong></li>
+</ol>
+<h1 id="equals-和-的区别"><a href="#equals-和-的区别" class="headerlink" title="equals 和&#x3D;&#x3D;的区别"></a>equals 和&#x3D;&#x3D;的区别</h1><p>&#x3D;&#x3D;”比较基本数据类型时比较的是表面值内容，而比较两个对象时比较的是两个对象的内存地址值</p>
+<p>如果没有对equals方法进行重写，则比较的是引用类型的变量所指向的对象的地址；</p>
+<p>诸如String、Date等类对equals方法进行了重写的话，比较的是所指向的对象的内容</p>
+<h1 id="wait-和-sleep-区别（一文彻底搞懂Java中wait和sleep方法的区别-java中的sleep和wait方法的区别-CSDN博客）"><a href="#wait-和-sleep-区别（一文彻底搞懂Java中wait和sleep方法的区别-java中的sleep和wait方法的区别-CSDN博客）" class="headerlink" title="wait 和 sleep 区别（一文彻底搞懂Java中wait和sleep方法的区别_java中的sleep和wait方法的区别-CSDN博客）"></a>wait 和 sleep 区别（<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44772566/article/details/136095774">一文彻底搞懂Java中wait和sleep方法的区别_java中的sleep和wait方法的区别-CSDN博客</a>）</h1><h1 id="runable、callable有什么区别？"><a href="#runable、callable有什么区别？" class="headerlink" title="runable、callable有什么区别？"></a>runable、callable有什么区别？</h1><p><img src="/img/blog/image-20250624235901461.png" srcset="/img/loading.gif" lazyload alt="image-20250624235901461"></p>
+<p>总结：<code>Runnable</code> 适合“跑一下就行”的任务，<code>Callable</code> 更适合“跑完给我个结果”并处理异常的任务。</p>
+<h1 id="新建线程的几种方式"><a href="#新建线程的几种方式" class="headerlink" title="新建线程的几种方式"></a>新建线程的几种方式</h1><p><strong>1.继承Thread类</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs java">步骤：<br><span class="hljs-number">1.</span>创建一个继承于Thread类的子类<br><span class="hljs-number">2.</span>重写Thread类的run() --&gt; 将此线程执行的操作声明在run()中<br><span class="hljs-number">3.</span>创建Thread类的子类的对象<br><span class="hljs-number">4.</span>通过此对象调用start()执行线程<br>    <br><span class="hljs-comment">//1.创建一个继承于Thread类的子类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyThread</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Thread</span> &#123;<br>    <span class="hljs-comment">//2.重写Thread类的run()</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">100</span>; i++) &#123;<br>            <span class="hljs-keyword">if</span> (i % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>) &#123;<br>                System.out.println(Thread.currentThread().getName() + <span class="hljs-string">&quot;:&quot;</span> + i);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThreadTest</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-comment">//3.创建Thread类的子类的对象</span><br>        <span class="hljs-type">MyThread</span> <span class="hljs-variable">t1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyThread</span>();<br><br>        <span class="hljs-comment">//4.通过此对象调用start():①启动当前线程 ② 调用当前线程的run()</span><br>        t1.start();<br><br>        <span class="hljs-comment">/*问题一：我们不能通过直接调用run()的方式启动线程，</span><br><span class="hljs-comment">        这种方式只是简单调用方法，并未新开线程*/</span><br>        <span class="hljs-comment">//t1.run();</span><br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>2.实现Runnable接口</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs java">步骤：<br><span class="hljs-number">1.</span>创建一个实现了Runnable接口的类<br><span class="hljs-number">2.</span>实现类去实现Runnable中的抽象方法：run()<br><span class="hljs-number">3.</span>创建实现类的对象<br><span class="hljs-number">4.</span>将此对象作为参数传递到Thread类的构造器中，创建Thread类的对象<br><span class="hljs-number">5.</span>通过Thread类的对象调用start()<br>① 启动线程<br>②调用当前线程的run()–&gt;调用了Runnable类型的target的run()<br><br><span class="hljs-keyword">package</span> atguigu.java;<br><br><span class="hljs-comment">//1.创建一个实现了Runnable接口的类</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MThread</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br><br>    <span class="hljs-comment">//2.实现类去实现Runnable中的抽象方法：run()</span><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>    	<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThreadTest1</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-comment">//3.创建实现类的对象</span><br>        <span class="hljs-type">MThread</span> <span class="hljs-variable">mThread</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MThread</span>();<br><br>        <span class="hljs-comment">//4.将此对象作为参数传递到Thread类的构造器中，创建Thread类的对象</span><br>        <span class="hljs-type">Thread</span> <span class="hljs-variable">t1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(mThread);<br>        t1.setName(<span class="hljs-string">&quot;线程1&quot;</span>);<br><br>        <span class="hljs-comment">//5.通过Thread类的对象调用start():① 启动线程 ②调用当前线程的run()--&gt;调用了Runnable类型的target的run()</span><br>        t1.start();<br>    &#125;<br><br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p><strong>3.实现Callable接口</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs java">步骤：<br><span class="hljs-number">1.</span>创建一个实现Callable的实现类<br><span class="hljs-number">2.</span>实现call方法，将此线程需要执行的操作声明在call()中<br><span class="hljs-number">3.</span>创建Callable接口实现类的对象<br><span class="hljs-number">4.</span>将此Callable接口实现类的对象作为传递到FutureTask构造器中，创建FutureTask的对象<br><span class="hljs-number">5.</span>将FutureTask的对象作为参数传递到Thread类的构造器中，创建Thread对象，并调用start()<br><span class="hljs-number">6.</span>获取Callable中call方法的返回值<br><br>实现Callable接口的方式创建线程的强大之处<br><br>call()可以有返回值的<br>call()可以抛出异常，被外面的操作捕获，获取异常的信息<br>Callable是支持泛型的<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyThread</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Callable</span>&lt;Integer&gt; &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Integer <span class="hljs-title function_">call</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        System.out.println(<span class="hljs-string">&quot;Callable come in&quot;</span>);<br>        <span class="hljs-keyword">try</span> &#123;<br>            TimeUnit.SECONDS.sleep(<span class="hljs-number">3</span>);<br>        &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">1024</span>;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CallableDemo</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> ExecutionException, InterruptedException &#123;<br><br>        <span class="hljs-comment">//使用构造方法：FutureTask(Callable&lt;V&gt; callable)</span><br>        FutureTask&lt;Integer&gt; futureTask = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FutureTask</span>&lt;Integer&gt;(<span class="hljs-keyword">new</span> <span class="hljs-title class_">MyThread</span>());<br><br>        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(futureTask, <span class="hljs-string">&quot;AAA&quot;</span>).start();<br>        <span class="hljs-comment">//new Thread(futureTask, &quot;BBB&quot;).start();//复用，直接取值，不要重启两个线程</span><br>        <span class="hljs-comment">//PS：多个线程来抢一个futureTask，里面的计算方法call()只计算一次，要想多次算，要创建多个FutureTask&lt;V&gt;对象</span><br><br>        <span class="hljs-type">int</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> <span class="hljs-number">100</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">b</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br><span class="hljs-comment">//如果你想在等待 FutureTask 完成的同时执行其他工作，可以使用带有超时的循环，或者定期检查 isDone() 而不阻塞线程：</span><br>        <span class="hljs-keyword">while</span> (!futureTask.isDone()) &#123;<br>            <span class="hljs-comment">// 执行其他工作或短暂休眠</span><br>            Thread.sleep(<span class="hljs-number">100</span>); <span class="hljs-comment">// 休眠 100 毫秒</span><br>        &#125;<br>        b = futureTask.get();<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<p><strong>4.使用[线程池]</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><code class="hljs java">步骤：<br><span class="hljs-number">1.</span>以方式二或方式三创建好实现了Runnable接口的类或实现Callable的实现类<br><span class="hljs-number">2.</span>实现run或call方法<br><span class="hljs-number">3.</span>创建线程池<br><span class="hljs-number">4.</span>调用线程池的execute方法执行某个线程，参数是之前实现Runnable或Callable接口的对象<br>    <br><span class="hljs-keyword">package</span> com.atguigu.java2;<br><br><span class="hljs-keyword">import</span> java.util.concurrent.ExecutorService;<br><span class="hljs-keyword">import</span> java.util.concurrent.Executors;<br><span class="hljs-keyword">import</span> java.util.concurrent.ThreadPoolExecutor;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">NumberThread</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-comment">//遍历100以内的偶数</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt;= <span class="hljs-number">100</span>; i++) &#123;<br>            <span class="hljs-keyword">if</span> (i % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>) &#123;<br>                System.out.println(Thread.currentThread().getName() + <span class="hljs-string">&quot;: &quot;</span> + i);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">NumberThread1</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> &#123;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-comment">//遍历100以内的奇数</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt;= <span class="hljs-number">100</span>; i++) &#123;<br>            <span class="hljs-keyword">if</span> (i % <span class="hljs-number">2</span> != <span class="hljs-number">0</span>) &#123;<br>                System.out.println(Thread.currentThread().getName() + <span class="hljs-string">&quot;: &quot;</span> + i);<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThreadPool</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-comment">//1. 提供指定线程数量的线程池</span><br>        <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">service</span> <span class="hljs-operator">=</span> Executors.newFixedThreadPool(<span class="hljs-number">10</span>);<br><br>        <span class="hljs-comment">//输出class java.util.concurrent.ThreadPoolExecutor</span><br>        System.out.println(service.getClass());<br><br>        <span class="hljs-type">ThreadPoolExecutor</span> <span class="hljs-variable">service1</span> <span class="hljs-operator">=</span> (ThreadPoolExecutor) service;<br>        <span class="hljs-comment">//自定义线程池的属性</span><br><span class="hljs-comment">//        service1.setCorePoolSize(15);</span><br><span class="hljs-comment">//        service1.setKeepAliveTime();</span><br><br>        <span class="hljs-comment">//2. 执行指定的线程的操作。需要提供实现Runnable接口或Callable接口实现类的对象</span><br>        service.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberThread</span>());<span class="hljs-comment">//适用于Runnable</span><br>        service.execute(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberThread1</span>());<span class="hljs-comment">//适用于Runnable</span><br><span class="hljs-comment">//        service.submit(Callable callable);//适合使用于Callable</span><br><br>        <span class="hljs-comment">//3. 关闭连接池</span><br>        service.shutdown();<br>    &#125;<br><br>&#125;<br><br><br></code></pre></td></tr></table></figure>
+
+<h1 id="线程有哪些状态，不同状态之间怎么进行切换"><a href="#线程有哪些状态，不同状态之间怎么进行切换" class="headerlink" title="线程有哪些状态，不同状态之间怎么进行切换"></a>线程有哪些状态，不同状态之间怎么进行切换</h1><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态：</p>
+<ul>
+<li><p>NEW: 初始状态，线程被创建出来但没有被调用 <code>start()</code> 。</p>
+</li>
+<li><p>RUNNABLE: 运行状态，线程被调用了 <code>start()</code>等待运行的状态。</p>
+</li>
+<li><p>BLOCKED：阻塞状态，需要等待锁释放。</p>
+</li>
+<li><p>WAITING：等待状态，表示该线程需要等待其他线程做出一些特定动作（通知或中断）。</p>
+</li>
+<li><p>TIME_WAITING：超时等待状态，可以在指定的时间后自行返回而不是像 WAITING 那样一直等待。</p>
+</li>
+<li><p>TERMINATED：终止状态，表示该线程已经运行完毕。</p>
+<p><img src="/img/blog/jbxyf-remote-01.png" srcset="/img/loading.gif" lazyload alt="Java 线程状态变迁图"></p>
+</li>
+</ul>
+<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态。</p>
+<p><strong>TIMED_WAITING(超时等待)</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep（long millis）</code>方法或 <code>wait（long millis）</code>方法可以将线程置于 TIMED_WAITING 状态。当超时时间结束后，线程将会返回到 RUNNABLE 状态。</p>
+<p>当线程进入 <code>synchronized</code> 方法&#x2F;块或者调用 <code>wait</code> 后（被 <code>notify</code>）重新进入 <code>synchronized</code> 方法&#x2F;块，但是锁被其它线程占有，这个时候线程就会进入 <strong>BLOCKED（阻塞）</strong> 状态。</p>
+<p>线程在执行完了 <code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
+<p>在 Linux 内核的状态机中，它们都属于“睡眠（Sleep）”状态，但触发机制和唤醒方式不同。</p>
+<p><strong>1. 阻塞态 (Blocked) —— 被迫停下（等资源）</strong></p>
+<ul>
+<li><strong>核心特征：被动性</strong>。进程&#x2F;线程想继续往下跑，但是它<strong>需要的一个外部资源现在拿不到</strong>，操作系统强行把它踢出了 CPU，让它去旁边排队。</li>
+<li><strong>常见场景</strong>：<ul>
+<li><strong>等待 I&#x2F;O 完成</strong>：你想读硬盘上的文件，但硬盘转得很慢，数据还没取出来。在这个过程中，你只能干等（这是最典型的阻塞）。</li>
+<li><strong>等待获取锁（Lock&#x2F;Mutex）</strong>：你想进入临界区修改一个变量，但是发现这个变量正在被另一个线程修改（锁被别人占了）。你拿不到锁，只能在锁的等待队列里<strong>被迫阻塞</strong>。</li>
+</ul>
+</li>
+<li><strong>如何唤醒</strong>：<strong>由外部事件被动唤醒</strong>。比如硬盘把数据读完了，给 CPU 发了个中断；或者占用锁的那个线程把锁释放了，OS 会通知你：“资源有了，你可以回就绪队列了。”</li>
+</ul>
+<p><strong>2. 等待态 (Waiting) —— 主动停下（等条件&#x2F;时间）</strong></p>
+<ul>
+<li><strong>核心特征：主动性</strong>。进程&#x2F;线程当前没有被任何具体的硬件 I&#x2F;O 或锁卡住，而是它<strong>自己主动决定休息一会儿</strong>，或者它在等一个**逻辑上的“条件”或“信号”**发生。</li>
+<li><strong>常见场景</strong>：<ul>
+<li><strong>定时等待（Timed Waiting）</strong>：程序里写了 sleep(5)（睡 5 秒）。这时候没有任何资源竞争，纯粹是程序自己要求暂停 5 秒。</li>
+<li><strong>条件等待（Condition Wait）</strong>：线程调用了 wait() 或 await()。比如一个生产者-消费者模型，消费者发现队列空了，它主动调用 wait() 进入等待态。它不是在等一把锁（它可能已经拿到锁了），而是在等“队列里有数据”这个<strong>业务条件</strong>成立。</li>
+</ul>
+</li>
+<li><strong>如何唤醒</strong>：<ul>
+<li><strong>时间到了</strong>：sleep(5) 的 5 秒钟走完了，操作系统的定时器把你叫醒。</li>
+<li><strong>收到信号</strong>：别的线程（比如生产者放了数据后）主动调用 notify() 或 signal() 发个信号给你：“别睡了，条件满足了。”</li>
+</ul>
+</li>
+</ul>
+<h1 id="JDK代理和CGLIB的代理有什么区别"><a href="#JDK代理和CGLIB的代理有什么区别" class="headerlink" title="JDK代理和CGLIB的代理有什么区别"></a>JDK代理和CGLIB的代理有什么区别</h1><p><strong>JDK 动态代理只能代理实现了接口的类或者直接代理接口，而 CGLIB 可以代理未实现任何接口的类。</strong> 另外， CGLIB 动态代理是通过生成一个被代理类的子类来拦截被代理类的方法调用，因此不能代理声明为 final 类型的类和方法。</p>
+<p>就二者的效率来说，大部分情况都是 JDK 动态代理更优秀，随着 JDK 版本的升级，这个优势更加明显。</p>
+<p><strong>CGLIB 动态代理类使用步骤</strong></p>
+<p>定义一个类；</p>
+<p>自定义 <code>MethodInterceptor</code> 并重写 <code>intercept</code> 方法，<code>intercept</code> 用于拦截增强被代理类的方法，和 JDK 动态代理中的 <code>invoke</code> 方法类似；</p>
+<p>通过 <code>Enhancer</code> 类的 <code>create()</code>创建代理类</p>
+<h1 id="了解双亲委派机制吗-tomcat打破了双亲委派模型，为什么要打破他？"><a href="#了解双亲委派机制吗-tomcat打破了双亲委派模型，为什么要打破他？" class="headerlink" title="了解双亲委派机制吗,tomcat打破了双亲委派模型，为什么要打破他？"></a>了解双亲委派机制吗,tomcat打破了双亲委派模型，为什么要打破他？</h1><p>在介绍双亲委派机制的时候，不得不提ClassLoader（类加载器）。说ClassLoader之前，我们得先了解下Java的基本知识。<br>  Java是运行在Java的虚拟机(JVM)中的，但是它是如何运行在JVM中了呢？我们在IDE中编写的Java源代码被编译器编译成.class的字节码文件。然后由我们得ClassLoader负责将这些class文件给加载到JVM中去执行。<br>  JVM中提供了三层的ClassLoader：</p>
+<p>1.Bootstrap classLoader:主要负责加载核心的类库(java.lang.*等)，构造ExtClassLoader和APPClassLoader。</p>
+<p>2.ExtClassLoader：主要负责加载jre&#x2F;lib&#x2F;ext目录下的一些扩展的jar。</p>
+<p>3.AppClassLoader：主要负责加载应用程序的主函数类</p>
+<p>另外，类加载器之间的父子关系一般不是以继承的关系来实现的，而是通常使用组合关系来复用父加载器的代码。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs kotlin"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ClassLoader</span> &#123;<br>  ...<br>  <span class="hljs-comment">// 组合</span><br>  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ClassLoader parent;<br>  <span class="hljs-keyword">protected</span> ClassLoader(ClassLoader parent) &#123;<br>       <span class="hljs-keyword">this</span>(checkCreateClassLoader(), parent);<br>  &#125;<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在面向对象编程中，有一条非常经典的设计原则：**组合优于继承，多用组合少用继承</p>
+<p>那如果有一个我们写的Hello.java编译成的Hello.class文件，它是如何被加载到JVM中的呢？别着急，请继续往下看。</p>
+<img src="/img/blog/jbxyf-remote-02.png" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 67%;" />
+
+<p>从上图中我们就更容易理解了，当一个Hello.class这样的文件要被加载时。不考虑我们自定义类加载器，首先会在AppClassLoader中检查是否加载过，如果有那就无需再加载了。如果没有，那么会拿到父加载器，然后调用父加载器的loadClass方法。父类中同理也会先检查自己是否已经加载过，如果没有再往上。注意这个类似递归的过程，直到到达Bootstrap classLoader之前，都是在检查是否加载过，并不会选择自己去加载。直到BootstrapClassLoader，已经没有父加载器了，这时候开始考虑自己是否能加载了，如果自己无法加载，会下沉到子加载器去加载，一直到最底层，如果没有任何加载器能加载，就会抛出ClassNotFoundException。那么有人就有下面这种疑问了？<br>	<strong>为什么要设计这种机制</strong></p>
+<p>这种设计有个好处是，如果有人想替换系统级别的类：String.java。篡改它的实现，在这种机制下这些系统的类已经被Bootstrap classLoader加载过了（为什么？因为当一个类需要加载的时候，最先去尝试加载的就是BootstrapClassLoader），所以其他类加载器并没有机会再去加载，从一定程度上防止了危险代码的植入。</p>
+<p>保障类加载的安全性</p>
+<p>双亲委派机制的核心目的是为了保证Java程序的安全。通过双亲委派，JVM确保了核心类库（如java.lang包下的类）只能由启动类加载器加载，防止恶意代码通过自定义类加载器来篡改这些核心类库。</p>
+<p>避免重复加载</p>
+<p>双亲委派机制可以避免同一个类被多次加载。当一个类被请求加载时，JVM会从最顶层的启动类加载器开始，向下逐层查找，如果已经加载则直接返回，否则委派给父类加载器。</p>
+<img src="/img/blog/jbxyf-remote-03.png" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 200%;" />
+
+<p><mark><strong>双亲委派的执行流程</strong></mark></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="hljs-type">boolean</span> resolve)<br>    <span class="hljs-keyword">throws</span> ClassNotFoundException<br>&#123;<br>    <span class="hljs-keyword">synchronized</span> (getClassLoadingLock(name)) &#123;<br>        <span class="hljs-comment">//首先，检查该类是否已经加载过</span><br>        <span class="hljs-type">Class</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> findLoadedClass(name);<br>        <span class="hljs-keyword">if</span> (c == <span class="hljs-literal">null</span>) &#123;<br>            <span class="hljs-comment">//如果 c 为 null，则说明该类没有被加载过</span><br>            <span class="hljs-type">long</span> <span class="hljs-variable">t0</span> <span class="hljs-operator">=</span> System.nanoTime();<br>            <span class="hljs-keyword">try</span> &#123;<br>                <span class="hljs-keyword">if</span> (parent != <span class="hljs-literal">null</span>) &#123;<br>                    <span class="hljs-comment">//当父类的加载器不为空，则通过父类的loadClass来加载该类</span><br>                    c = parent.loadClass(name, <span class="hljs-literal">false</span>);<br>                &#125; <span class="hljs-keyword">else</span> &#123;<br>                    <span class="hljs-comment">//当父类的加载器为空，则调用启动类加载器来加载该类</span><br>                    c = findBootstrapClassOrNull(name);<br>                &#125;<br>            &#125; <span class="hljs-keyword">catch</span> (ClassNotFoundException e) &#123;<br>                <span class="hljs-comment">//非空父类的类加载器无法找到相应的类，则抛出异常</span><br>            &#125;<br><br>            <span class="hljs-keyword">if</span> (c == <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-comment">//当父类加载器无法加载时，则调用findClass方法来加载该类</span><br>                <span class="hljs-comment">//用户可通过覆写该方法，来自定义类加载器</span><br>                <span class="hljs-type">long</span> <span class="hljs-variable">t1</span> <span class="hljs-operator">=</span> System.nanoTime();<br>                c = findClass(name);<br><br>                <span class="hljs-comment">//用于统计类加载器相关的信息</span><br>                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);<br>                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);<br>                sun.misc.PerfCounter.getFindClasses().increment();<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">if</span> (resolve) &#123;<br>            <span class="hljs-comment">//对类进行link操作</span><br>            resolveClass(c);<br>        &#125;<br>        <span class="hljs-keyword">return</span> c;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>每当一个类加载器接收到加载请求时，它会先将请求转发给父类加载器。在父类加载器没有找到所请求的类的情况下，该类加载器才会尝试去加载。</p>
+<p>结合上面的源码，简单总结一下双亲委派模型的执行流程：</p>
+<ul>
+<li>在类加载的时候，系统会首先判断当前类是否被加载过。已经被加载的类会直接返回，否则才会尝试加载（每个父类加载器都会走一遍这个流程）。</li>
+<li>类加载器在进行类加载的时候，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成（调用父加载器 <code>loadClass()</code>方法来加载类）。这样的话，所有的请求最终都会传送到顶层的启动类加载器 <code>BootstrapClassLoader</code> 中。</li>
+<li>只有当父加载器反馈自己无法完成这个加载请求（它的搜索范围中没有找到所需的类）时，子加载器才会尝试自己去加载（调用自己的 <code>findClass()</code> 方法来加载类）。</li>
+<li>如果子类加载器也无法加载这个类，那么它会抛出一个 <code>ClassNotFoundException</code> 异常。</li>
+</ul>
+<p> 拓展一下：</p>
+<p><strong>JVM 判定两个 Java 类是否相同的具体规则</strong>：JVM 不仅要看类的全名是否相同，还要看加载此类的类加载器是否一样。只有两者都相同的情况，才认为两个类是相同的。即使两个类来源于同一个 <code>Class</code> 文件，被同一个虚拟机加载，只要加载它们的类加载器不同，那这两个类就必定不相同。</p>
+<p><mark>打破双亲委派模型的方法</mark></p>
+<p>自定义加载器的话，需要继承 <code>ClassLoader</code> 。如果我们不想打破双亲委派模型，就重写 <code>ClassLoader</code> 类中的 <code>findClass()</code> 方法即可，无法被父类加载器加载的类最终会通过这个方法被加载。但是，如果想打破双亲委派模型则需要重写 <code>loadClass()</code> 方法。</p>
+<p>为什么是重写 <code>loadClass()</code> 方法打破双亲委派模型呢？双亲委派模型的执行流程已经解释了：</p>
+<blockquote>
+<p>类加载器在进行类加载的时候，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成（调用父加载器 <code>loadClass()</code>方法来加载类）。</p>
+</blockquote>
+<p>重写 <code>loadClass()</code>方法之后，我们就可以改变传统双亲委派模型的执行流程。例如，子类加载器可以在委派给父类加载器之前，先自己尝试加载这个类，或者在父类加载器返回之后，再尝试从其他地方加载这个类。具体的规则由我们自己实现，根据项目需求定制化。</p>
+<p>我们比较熟悉的 Tomcat 服务器为了能够优先加载 Web 应用目录下的类，然后再加载其他目录下的类，就自定义了类加载器 <code>WebAppClassLoader</code> 来打破双亲委托机制。这也是 Tomcat 下 Web 应用之间的类实现隔离的具体原理。</p>
+<p>Tomcat 的类加载器的层次结构如下:</p>
+<img src="/img/blog/jbxyf-remote-04.png" srcset="/img/loading.gif" lazyload alt="Tomcat 的类加载器的层次结构" style="zoom: 80%;" />  
+
+<p><strong>为什么要打破双亲委派机制</strong>：(<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/466696410">(2 封私信 &#x2F; 2 条消息) Tomcat为什么要JAVA破坏双亲委派机制？ - 知乎</a>)</p>
+<p>因为有时候我们<strong>需要加载自己定义的类或框架类，而不想被系统类覆盖或者影响。</strong></p>
+<h1 id="类加载器有哪些？加载过程是怎样的？"><a href="#类加载器有哪些？加载过程是怎样的？" class="headerlink" title="类加载器有哪些？加载过程是怎样的？"></a>类加载器有哪些？加载过程是怎样的？</h1><p><strong>1.类的生命周期</strong></p>
+<p>类从被加载到虚拟机内存中开始到卸载出内存为止，它的整个生命周期可以简单概括为 7 个阶段：加载（Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unloading）。其中，验证、准备和解析这三个阶段可以统称为连接（Linking）。</p>
+<img src="/img/blog/jbxyf-remote-05.png" srcset="/img/loading.gif" lazyload alt="一个类的完整生命周期" style="zoom: 80%;" /> 
+
+<p><strong>2.类的加载过程</strong></p>
+<p><strong>Class 文件需要加载到虚拟机中之后才能运行和使用，那么虚拟机是如何加载这些 Class 文件呢？</strong></p>
+<p>系统加载 Class 类型的文件主要三步：<strong>加载-&gt;连接-&gt;初始化</strong>。连接过程又可分为三步：<strong>验证-&gt;准备-&gt;解析</strong>。</p>
+<img src="/img/blog/jbxyf-remote-06.png" srcset="/img/loading.gif" lazyload alt="类加载过程" style="zoom:67%;" /> 
+
+<p><strong>2.1加载</strong></p>
+<p>类加载过程的第一步，主要完成下面 3 件事情：</p>
+<ol>
+<li>通过全类名获取定义此类的二进制字节流。</li>
+<li>将字节流所代表的静态存储结构转换为方法区的运行时数据结构。</li>
+<li>在内存中生成一个代表该类的 <code>Class</code> 对象，作为方法区这些数据的访问入口。</li>
+</ol>
+<p>加载这一步主要是通过我们后面要讲到的 <strong>类加载器</strong> 完成的。类加载器有很多种，当我们想要加载一个类的时候，具体是哪个类加载器加载由 <strong>双亲委派模型</strong> 决定（不过，我们也能打破由双亲委派模型）。</p>
+<p>每个 Java 类都有一个引用指向加载它的 <code>ClassLoader</code>。不过，数组类不是通过 <code>ClassLoader</code> 创建的，而是 JVM 在需要的时候自动创建的，数组类通过<code>getClassLoader()</code>方法获取 <code>ClassLoader</code> 的时候和该数组的元素类型的 <code>ClassLoader</code> 是一致的。</p>
+<p>一个非数组类的加载阶段（加载阶段获取类的二进制字节流的动作）是可控性最强的阶段，这一步我们可以去完成还可以自定义类加载器去控制字节流的获取方式（重写一个类加载器的 <code>loadClass()</code> 方法）。</p>
+<p>加载阶段与连接阶段的部分动作(如一部分字节码文件格式验证动作)是交叉进行的，加载阶段尚未结束，连接阶段可能就已经开始了。</p>
+<p><strong>2.2验证</strong></p>
+<p><strong>验证是连接阶段的第一步，这一阶段的目的是确保 Class 文件的字节流中包含的信息符合《Java 虚拟机规范》的全部约束要求，保证这些信息被当作代码运行后不会危害虚拟机自身的安全。</strong></p>
+<p><strong>2.3准备</strong></p>
+<p><strong>准备阶段是正式为类变量分配内存并设置类变量初始值的阶段</strong>，这些内存都将在方法区中分配。对于该阶段有以下几点需要注意：</p>
+<p>这时候进行内存分配的仅包括类变量（ Class Variables ，即静态变量，被 <code>static</code> 关键字修饰的变量，只与类相关，因此被称为类变量），而不包括实例变量。实例变量会在对象实例化时随着对象一块分配在 Java 堆中。</p>
+<p>从概念上讲，类变量所使用的内存都应当在 <strong>方法区</strong> 中进行分配。不过有一点需要注意的是：JDK 7 之前，HotSpot 使用永久代来实现方法区的时候，实现是完全符合这种逻辑概念的。 而在 JDK 7 及之后，HotSpot 已经把原本放在永久代的字符串常量池、静态变量等移动到堆中，这个时候类变量则会随着 Class 对象一起存放在 Java 堆中。相关阅读：<a target="_blank" rel="noopener" href="https://github.com/fenixsoft/jvm_book/issues/75">《深入理解 Java 虚拟机（第 3 版）》勘误#75</a></p>
+<p>这里所设置的初始值”通常情况”下是数据类型默认的零值（如 0、0L、null、false 等），比如我们定义了<code>public static int value=111</code> ，那么 value 变量在准备阶段的初始值就是 0 而不是 111（初始化阶段才会赋值）。特殊情况：比如给 value 变量加上了 final 关键字<code>public static final int value=111</code> ，那么准备阶段 value 的值就被赋值为 111。</p>
+<hr>
+<p><strong>2.4解析</strong></p>
+<p><strong>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程。</strong> 解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用限定符 7 类符号引用进行。</p>
+<p>具体来说，解析包括：</p>
+<ul>
+<li>将<strong>类的符号引用</strong>（如类名）转换为类的<strong>直接引用</strong>（即 JVM 中的 <code>Class</code> 对象）。</li>
+<li>将<strong>字段的符号引用</strong>转换为字段的<strong>直接引用</strong>（即字段的内存地址）。</li>
+<li>将<strong>方法的符号引用</strong>转换为方法的<strong>直接引用</strong>（即方法的内存地址）。</li>
+</ul>
+<p>解析阶段的目的是通过符号表来查找并替换符号引用（类名、字段名等）为实际的地址或对象引用。</p>
+<p><strong>例如：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">java复制编辑Class&lt;?&gt; cls = Class.forName(<span class="hljs-string">&quot;com.example.MyClass&quot;</span>);<br><span class="hljs-comment">// 解析阶段会确保 cls 直接指向 MyClass 类的内存地址</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>2.5初始化阶段</strong></p>
+<p><strong>初始化阶段是执行初始化方法 <code>&lt;clinit&gt; ()</code>方法的过程，是类加载的最后一步，这一步 JVM 才开始真正执行类中定义的 Java 程序代码(字节码)。</strong></p>
+<p>对于<code>&lt;clinit&gt; ()</code> 方法的调用，虚拟机会自己确保其在多线程环境中的安全性。因为 <code>&lt;clinit&gt; ()</code> 方法是带锁线程安全，所以在多线程环境下进行类初始化的话可能会引起多个线程阻塞，并且这种阻塞很难被发现。</p>
+<p>对于初始化阶段，虚拟机严格规范了有且只有 6 种情况下，必须对类进行初始化(只有主动去使用类才会初始化类)：</p>
+<ol>
+<li>当遇到 new、 getstatic、putstatic 或 invokestatic 这 4 条字节码指令时，比如 new一个类，读取一个静态字段(未被 final 修饰)、或调用一个类的静态方法时。 <ul>
+<li>当 jvm 执行 <code>new</code> 指令时会初始化类。即当程序创建一个类的实例对象。</li>
+<li>当 jvm 执行 <code>getstatic</code> 指令时会初始化类。即程序访问类的静态变量(不是静态常量，常量会被加载到运行时常量池)。</li>
+<li>当 jvm 执行 <code>putstatic</code> 指令时会初始化类。即程序给类的静态变量赋值。</li>
+<li>当 jvm 执行 <code>invokestatic</code> 指令时会初始化类。即程序调用类的静态方法。</li>
+</ul>
+</li>
+<li>使用 <code>java.lang.reflect</code> 包的方法对类进行反射调用时如 <code>Class.forName(&quot;...&quot;)</code>, <code>newInstance()</code> 等等。如果类没初始化，需要触发其初始化。</li>
+<li>初始化一个类，如果其父类还未初始化，则先触发该父类的初始化。</li>
+<li>当虚拟机启动时，用户需要定义一个要执行的主类 (包含 <code>main</code> 方法的那个类)，虚拟机会先初始化这个类。</li>
+<li><code>MethodHandle</code> 和 <code>VarHandle</code> 可以看作是轻量级的反射调用机制，而要想使用这 2 个调用，<br>就必须先使用 <code>findStaticVarHandle</code> 来初始化要调用的类。</li>
+</ol>
+<p><strong>2.6类卸载</strong></p>
+<p><strong>卸载类即该类的 Class 对象被 GC。</strong></p>
+<p>卸载类需要满足 3 个要求:</p>
+<ol>
+<li>该类的所有的实例对象都已被 GC，也就是说堆不存在该类的实例对象。</li>
+<li>该类没有在其他任何地方被引用</li>
+<li>该类的类加载器的实例已被 GC</li>
+</ol>
+<p>所以，在 JVM 生命周期内，由 jvm 自带的类加载器加载的类是不会被卸载的。但是由我们自定义的类加载器加载的类是可能被卸载的。</p>
+<p>只要想通一点就好了，JDK 自带的 <code>BootstrapClassLoader</code>, <code>ExtClassLoader</code>, <code>AppClassLoader</code> 负责加载 JDK 提供的类，所以它们(类加载器的实例)肯定不会被回收。而我们自定义的类加载器的实例是可以被回收的，所以使用我们自定义加载器加载的类是可以被卸载掉的。</p>
+<p><mark>类加载器</mark></p>
+<ul>
+<li><p>类加载器是一个负责加载类的对象，用于实现类加载过程中的加载这一步。</p>
+</li>
+<li><p>每个 Java 类都有一个引用指向加载它的 <code>ClassLoader</code>。</p>
+</li>
+<li><p>数组类不是通过 <code>ClassLoader</code> 创建的（数组类没有对应的二进制字节流），是由 JVM 直接生成的。</p>
+</li>
+</ul>
+<p>简单来说，<strong>类加载器的主要作用就是加载 Java 类的字节码（ <code>.class</code> 文件）到 JVM 中（在内存中生成一个代表该类的 <code>Class</code> 对象）。</strong> 字节码可以是 Java 源程序（<code>.java</code>文件）经过 <code>javac</code> 编译得来，也可以是通过工具动态生成或者通过网络下载得来。</p>
+<p><strong>1.类加载器加载规则</strong></p>
+<p>JVM 启动的时候，并不会一次性加载所有的类，而是根据需要去动态加载。也就是说，大部分类在具体用到的时候才会去加载，这样对内存更加友好。</p>
+<p><strong>2.类加载器总结</strong></p>
+<ul>
+<li><p><strong><code>BootstrapClassLoader</code>(启动类加载器)</strong>：最顶层的加载类，由 C++实现，通常表示为 null，并且没有父级，主要用来加载 JDK 内部的核心类库（ <code>%JAVA_HOME%/lib</code>目录下的 <code>rt.jar</code>、<code>resources.jar</code>、<code>charsets.jar</code>等 jar 包和类）以及被 <code>-Xbootclasspath</code>参数指定的路径下的所有类。</p>
+</li>
+<li><p><strong><code>ExtensionClassLoader</code>(扩展类加载器)</strong>：主要负责加载 <code>%JRE_HOME%/lib/ext</code> 目录下的 jar 包和类以及被 <code>java.ext.dirs</code> 系统变量所指定的路径下的所有类。</p>
+</li>
+<li><p><strong><code>AppClassLoader</code>(应用程序类加载器)</strong>：面向我们用户的加载器，负责加载当前应用 classpath 下的所有 jar 包和类。</p>
+</li>
+</ul>
+<p><strong><code>rt.jar</code></strong>：rt 代表“RunTime”，<code>rt.jar</code>是 Java 基础类库，包含 Java doc 里面看到的所有的类的类文件。也就是说，我们常用内置库 <code>java.xxx.*</code>都在里面，比如<code>java.util.*</code>、<code>java.io.*</code>、<code>java.nio.*</code>、<code>java.lang.*</code>、<code>java.sql.*</code>、<code>java.math.*</code>。</p>
+<p>Java 9 引入了模块系统，并且略微更改了上述的类加载器。扩展类加载器被改名为平台类加载器（platform class loader）。Java SE 中除了少数几个关键模块，比如说 <code>java.base</code> 是由启动类加载器加载之外，其他的模块均由平台类加载器所加载</p>
+<p>除了 <code>BootstrapClassLoader</code> 是 JVM 自身的一部分之外，其他所有的类加载器都是在 JVM 外部实现的，并且全都继承自 <code>ClassLoader</code>抽象类。这样做的好处是用户可以自定义类加载器，以便让应用程序自己决定如何去获取所需的类。</p>
+<p>每个 <code>ClassLoader</code> 可以通过<code>getParent()</code>获取其父 <code>ClassLoader</code>，如果获取到 <code>ClassLoader</code> 为<code>null</code>的话，那么该类是通过 <code>BootstrapClassLoader</code> 加载的。</p>
+<p><strong>3.自定义类加载器</strong></p>
+<p>除了 <code>BootstrapClassLoader</code> 其他类加载器均由 Java 实现且全部继承自<code>java.lang.ClassLoader</code>。如果我们要自定义自己的类加载器，很明显需要继承 <code>ClassLoader</code>抽象类。</p>
+<p>我们前面也说说了，除了 <code>BootstrapClassLoader</code> 其他类加载器均由 Java 实现且全部继承自<code>java.lang.ClassLoader</code>。如果我们要自定义自己的类加载器，很明显需要继承 <code>ClassLoader</code>抽象类。</p>
+<p><code>ClassLoader</code> 类有两个关键的方法：</p>
+<ul>
+<li><code>protected Class loadClass(String name, boolean resolve)</code>：加载指定二进制名称的类，实现了双亲委派机制 。<code>name</code> 为类的二进制名称，<code>resolve</code> 如果为 true，在加载时调用 <code>resolveClass(Class&lt;?&gt; c)</code> 方法解析该类。</li>
+<li><code>protected Class findClass(String name)</code>：根据类的二进制名称来查找类，默认实现是空方法。</li>
+</ul>
+<p>如果我们不想打破双亲委派模型，就重写 <code>ClassLoader</code> 类中的 <code>findClass()</code> 方法即可，无法被父类加载器加载的类最终会通过这个方法被加载。但是，如果想打破双亲委派模型则需要重写 <code>loadClass()</code> 方法。</p>
+<h1 id="Object有什么方法"><a href="#Object有什么方法" class="headerlink" title="Object有什么方法"></a>Object有什么方法</h1><ul>
+<li>getClass()：获取类的class对象。</li>
+<li>hashCode:获取对象的hashCode值</li>
+<li>equals():比较对象是否相等，比较的是值和地址，子类可重写以自定义。</li>
+<li>clone()：克隆方法。</li>
+<li>toString():如果没有重写，应用对象将打印的是地址值。</li>
+<li>notify():随机选择一个在该对象上调用wait方法的线程，解除其阻塞状态。该方法只能在同步方法或同步块内部调用。如果当前线程不是锁的持有者，该方法抛出一个IllegalMonitorStateException异常。</li>
+<li>notifyall():解除所有那些在该对象上调用wait方法的线程的阻塞状态。该方法只能在同步方法或同步块内部调用。如果当前线程不是锁的持有者，该方法抛出一个IllegalMonitorStateException异常。</li>
+<li>wait():导致线程进入等待状态，直到它被其他线程通过notify()或者notifyAll唤醒。该方法只能在同步方法中调用。如果当前线程不是锁的持有者，该方法抛出一个IllegalMonitorStateException异常。</li>
+<li>finalize()：对象回收时调用</li>
+</ul>
+<h1 id="为什么要设置wait和notify在父类中"><a href="#为什么要设置wait和notify在父类中" class="headerlink" title="为什么要设置wait和notify在父类中"></a>为什么要设置wait和notify在父类中</h1><p>将 <code>wait()</code> 和 <code>notify()</code> 放在父类中，可以实现更高效的线程同步和共享资源的管理，避免代码重复，提高可维护性。父类可以集中管理同步逻辑，而子类通过继承父类来获得这些功能，专注于自己的业务逻辑。</p>
+<h1 id="重载和重写区别"><a href="#重载和重写区别" class="headerlink" title="重载和重写区别"></a>重载和重写区别</h1><p>答：方法的重载和重写都是实现多态的方式，区别在于前者实现的是编译时的多态性，而后者实现的是运行时的多态性。重载发生在一个类中，同名的方法如果有不同的参数列表（参数类型不同、参数个数不同或者二者都不同）则视为重载；重写发生在子类与父类之间，重写要求子类被重写方法与父类被重写方法有相同的参数列表，有兼容的返回类型，比父类被重写方法更好访问，不能比父类被重写方法声明更多的异常（里氏代换原则）。重载对返回类型没有特殊的要求，不能根据返回类型进行区分。</p>
+<h1 id="接口是什么，使用的场景，和抽象类区别"><a href="#接口是什么，使用的场景，和抽象类区别" class="headerlink" title="接口是什么，使用的场景，和抽象类区别"></a>接口是什么，使用的场景，和抽象类区别</h1><h1 id="反射的概念及应用，反射在JVM层面的底层实现？使用场景？"><a href="#反射的概念及应用，反射在JVM层面的底层实现？使用场景？" class="headerlink" title="反射的概念及应用，反射在JVM层面的底层实现？使用场景？"></a>反射的概念及应用，反射在JVM层面的底层实现？使用场景？</h1><p><strong>1.反射的概念</strong></p>
+<p>反射（Reflection）是 Java 的一种特性，它可以让程序在运行时获取自身的信息，并且动态地操作类或对象的属性、方法和构造器等。通过反射功能，可以通过反射，程序可以在不知道类的具体实现的情况下，操作类的对象和成员。</p>
+<p><strong>定义</strong>：反射是指在<strong>运行状态（Runtime）**中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性。<br>这种**动态获取信息**以及</strong>动态调用对象方法**的功能称为 Java 语言的反射机制。</p>
+<ul>
+<li><strong>一句话总结</strong>：<strong>反射就是把 Java 类中的各种成分（成员变量、方法、构造器等）映射成一个个的 Java 对象</strong></li>
+</ul>
+<p><strong>2.反射的作用</strong></p>
+<ul>
+<li>运行时探查类的信息：反射允许我们在运行时加载、检查和使用类，甚至可以在运行时获取一个未加载的类。</li>
+<li>动态创建对象：使用反射可以实现动态地创建对象，而且可以选择该类的任意一个构造函数来创建对象实例。</li>
+<li><mark>访问或修改私有成员</mark>：反射可以访问和修改一个类中私有的字段和方法，即使这些字段和方法是私有的。</li>
+<li>扩展应用程序的可控性：反射可以提高应用程序的可扩展性，例如，它可以读取配置文件来决定需要加载哪个类。</li>
+</ul>
+<p><strong>3.什么情况下使用反射</strong></p>
+<ul>
+<li>动态加载类：可以使用类加载器动态加载要使用的类，而不是在编译期间声明对该类的依赖关系。</li>
+<li>获取类的信息：通过反射可以获取一个类的属性、方法、构造函数等信息，甚至可以获取注解和泛型信息。</li>
+<li>通过名称调用方法或访问属性：使用反射可以根据方法&#x2F;属性名称动态地调用&#x2F;访问对应的方法&#x2F;属性，这使得编写通用代码更加容易。</li>
+<li>动态代理：使用反射可以实现动态代理，即在运行时动态地创建一个实现某个接口的代理类，从而实现一些特殊的功能，如事务处理等。</li>
+</ul>
+<ol>
+<li>获取一个类的Class对象</li>
+</ol>
+<figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs cos"><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = MyClass.<span class="hljs-keyword">class</span><span class="hljs-comment">;</span><br>或<br>MyClass myClass = <span class="hljs-keyword">new</span> MyClass()<span class="hljs-comment">;</span><br><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = myClass.getClass()<span class="hljs-comment">;</span><br>或<br><span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-keyword">Class</span>&lt;?&gt; clazz = <span class="hljs-keyword">Class</span>.forName(<span class="hljs-string">&quot;com.example.MyClass&quot;</span>)<span class="hljs-comment">;</span><br>&#125; <span class="hljs-keyword">catch</span> (ClassNotFoundException e) &#123;<br>    e.printStackTrace()<span class="hljs-comment">;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>2.获取类中的构造方法</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs delphi"><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = MyClass.<span class="hljs-keyword">class</span>;<br><span class="hljs-function"><span class="hljs-keyword">Constructor</span>&lt;?&gt;[] <span class="hljs-title">constructors</span> = <span class="hljs-title">clazz</span>.<span class="hljs-title">getDeclaredConstructors</span><span class="hljs-params">()</span>;</span><br></code></pre></td></tr></table></figure>
+
+<p>3.创建一个实例</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs delphi"><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = MyClass.<span class="hljs-keyword">class</span>;<br><span class="hljs-function"><span class="hljs-keyword">Constructor</span>&lt;?&gt; <span class="hljs-title">constructor</span> = <span class="hljs-title">clazz</span>.<span class="hljs-title">getDeclaredConstructor</span><span class="hljs-params">()</span>;</span><br><span class="hljs-keyword">constructor</span>.setAccessible(true); <span class="hljs-comment">//如果构造方法为private，需要设置Accessible</span><br>MyClass myClass = (MyClass) <span class="hljs-keyword">constructor</span>.newInstance();<br><br></code></pre></td></tr></table></figure>
+
+<p>4.获取类的字段</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs coq"><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = MyClass.class;<br><span class="hljs-keyword">Field</span>[] fields = clazz.getDeclaredFields();<br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">Field</span> <span class="hljs-built_in">field</span> : fields) &#123;<br>    System.out.println(<span class="hljs-built_in">field</span>.getName());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>5.修改字段值</p>
+<figure class="highlight monkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs monkey">Class&lt;?&gt; clazz = MyClass.class;<br>My<span class="hljs-keyword">Class</span> <span class="hljs-title class_">myClass</span> = <span class="hljs-keyword">new</span> MyClass();<br><span class="hljs-keyword">Field</span> <span class="hljs-keyword">field</span> = clazz.getDeclaredField(<span class="hljs-string">&quot;fieldName&quot;</span>);<br><span class="hljs-keyword">field</span>.setAccessible(<span class="hljs-literal">true</span>); //如果字段为<span class="hljs-keyword">private</span>，需要设置Accessible<br><span class="hljs-keyword">field</span>.set(myClass, <span class="hljs-string">&quot;value&quot;</span>); //value为要修改为的值<br><br></code></pre></td></tr></table></figure>
+
+<p>6.调用类的方法</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = MyClass.<span class="hljs-keyword">class</span>;<br>MyClass myClass = <span class="hljs-built_in">new</span> MyClass();<br><span class="hljs-keyword">Method</span> <span class="hljs-keyword">method</span> = clazz.getDeclaredMethod(&quot;methodName&quot;, String.<span class="hljs-keyword">class</span>);<br><span class="hljs-keyword">method</span>.setAccessible(<span class="hljs-keyword">true</span>); //如果方法为private，需要设置Accessible<br><span class="hljs-keyword">Object</span> result = <span class="hljs-keyword">method</span>.invoke(myClass, &quot;参数&quot;); //传递给方法的参数<br><br></code></pre></td></tr></table></figure>
+
+<p><strong>底层实现可以分为两个阶段：</strong></p>
+<p><strong>阶段一：初次调用（慢）</strong></p>
+<p>当你第一次通过反射调用一个方法时（如 Method.invoke()），JVM 内部会经过一个相对复杂的流程：</p>
+<ol>
+<li><strong>权限检查 (Security Check)</strong>：检查调用者是否有权限访问该方法（比如 private 方法）。</li>
+<li><strong>创建 MethodAccessor</strong>：<ul>
+<li>JVM 不会直接去解析 Method 对象，而是会<mark>为每个 Method 对象在<strong>第一次调用时</strong>动态生成一个**“委派实现</mark> (Delegating MethodAccessor)”**。<br>.</li>
+</ul>
+</li>
+<li><strong>动态生成字节码 (关键)</strong>：<ul>
+<li>这个委派实现会进一步判断，决定是生成一个 <mark><strong>“本地实现 (Native MethodAccessor)”</strong> 还是 <strong>“Java 实现</mark> (Java MethodAccessor)”</strong>。</li>
+<li><strong>本地实现 (Native)</strong>：通过 JNI (Java Native Interface) 调用 C++ 代码来执行。<mark>启动快，但调用开销大。</mark></li>
+<li><strong>Java 实现 (Java)</strong>：<mark><strong>动态生成字节码</strong></mark>。JVM 会在运行时为你调用的那个方法，即时编译生成一个专门的 <mark>Java 类（</mark>比如叫 GeneratedMethodAccessor1），这个类里面是一<mark>段<strong>硬编码的、直接调用目标方法的字节码</strong></mark>。<ul>
+<li><em>比如，你要反射调用 user.getName()，它就生成一个类，里面直接就是 return user.getName();</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Inflation 机制（膨胀）</strong>：<ul>
+<li>JVM 默认有一个阈值（sun.reflect.inflationThreshold，通常是 15）。</li>
+<li>一个方法被反射调用的<strong>前 15 次</strong>，会使用<strong>本地实现</strong>。</li>
+<li>当调用次数<strong>超过 15 次</strong>后，JVM 认为这是一个“热点”反射调用，就会切换到<strong>动态生成字节码的 Java 实现</strong>。因为 Java 实现经过 JIT 即时编译优化后，执行效率远高于 Native 调用。</li>
+</ul>
+</li>
+</ol>
+<p> <strong>阶段二：后续调用（快）</strong></p>
+<ul>
+<li>一旦 MethodAccessor 的 Java 实现被生成并 JIT 编译后，后续的反射调用就<strong>绕过了所有检查和解析</strong>，直接执行那段<strong>高效的、编译好的字节码</strong>。</li>
+<li>这就是为什么反射在多次调用后，性能会大幅提升，甚至接近直接调用的原因。</li>
+</ul>
+<p><strong>使用场景</strong></p>
+<p><strong>Spring IOC</strong></p>
+<p>Spring 在启动时会：</p>
+<ol>
+<li>扫描类</li>
+<li>读取注解</li>
+<li>通过反射创建对象</li>
+</ol>
+<p><strong>依赖注入（DI）</strong></p>
+<p>Spring 会通过反射：</p>
+<ol>
+<li>找到字段</li>
+<li>设置可访问</li>
+<li>注入对象</li>
+</ol>
+<p><strong>动态代理</strong></p>
+<h1 id="protected是什么情况下不能访问"><a href="#protected是什么情况下不能访问" class="headerlink" title="protected是什么情况下不能访问"></a>protected是什么情况下不能访问</h1><h1 id="Java的泛型？泛型擦除机制是什么？java的泛型有了解吗，在什么场景下，需要使用泛型，泛型的底层是什么-Java-中的泛型（两万字超全详解）-java-泛型-CSDN博客"><a href="#Java的泛型？泛型擦除机制是什么？java的泛型有了解吗，在什么场景下，需要使用泛型，泛型的底层是什么-Java-中的泛型（两万字超全详解）-java-泛型-CSDN博客" class="headerlink" title="Java的泛型？泛型擦除机制是什么？java的泛型有了解吗，在什么场景下，需要使用泛型，泛型的底层是什么(Java 中的泛型（两万字超全详解）_java 泛型-CSDN博客)"></a>Java的泛型？泛型擦除机制是什么？java的泛型有了解吗，在什么场景下，需要使用泛型，泛型的底层是什么(<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45395059/article/details/126006369">Java 中的泛型（两万字超全详解）_java 泛型-CSDN博客</a>)</h1><h1 id="静态方法和非静态方法的区别，synchronized在静态和非静态方法下的区别"><a href="#静态方法和非静态方法的区别，synchronized在静态和非静态方法下的区别" class="headerlink" title="静态方法和非静态方法的区别，synchronized在静态和非静态方法下的区别"></a>静态方法和非静态方法的区别，synchronized在静态和非静态方法下的区别</h1><p><strong>1.synchronized作用于非静态方法</strong></p>
+<p>synchronized作用于非静态方法，实际上是对当前实例对象加锁，就是说如果一个实例对象的非静态同步方法获取锁后，该实例对象的其他非静态同步方法必须等待获取锁的方法释放锁后才能获取锁，可是别的实例对象的非静态同步方法因为跟该实例对象的非静态同步方法用的是不同的锁，所以毋须等待该实例对象已获取锁的非静态同步方法释放锁就可以获取他们自己的锁。<br>		情况1：同一个对象在两个线程中分别访问该对象的两个同步方法</p>
+<p>结果：会产生互斥。</p>
+<p>解释：因为锁针对的是对象，当对象调用一个synchronized方法时，其他同步方法需要等待其执行结束并释放锁后才能执行。</p>
+<p>情况2：不同对象在两个线程中调用同一个同步方法</p>
+<p>结果：不会产生互斥。</p>
+<p>解释：因为是两个对象，锁针对的是对象，并不是方法，所以可以并发执行，不会互斥。形象的来说就是因为我们每个线程在调用方法的时候都是new 一个对象，那么就会出现两个空间，两把钥匙。</p>
+<p><strong>2.synchronized作用于静态方法</strong></p>
+<p>synchronized作用于静态方法 ，实际上是对当前类的class对象加锁，但是一旦一个静态同步方法获取锁后，其他的静态同步方法都必须等待该方法释放锁后才能获取锁，而不管是同一个实例对象的静态同步方法之间，还是不同的实例对象的静态同步方法之间，只要它们同一个类的实例对象。但是对于一个对象的静态方法和非静态方法，因为不是同一把锁，所以可以同时获取，不会冲突。</p>
+<h1 id="接口和抽象类的区别"><a href="#接口和抽象类的区别" class="headerlink" title="接口和抽象类的区别"></a>接口和抽象类的区别</h1><p><strong>1.什么是抽象类和接口</strong></p>
+<p>抽象方法 即使用 <code>abstract</code> 关键字修饰，仅有声明没有方法体的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">f</span><span class="hljs-params">()</span>;    <span class="hljs-comment">//没有内容</span><br></code></pre></td></tr></table></figure>
+
+<p>如果一个类包含一个或者多个抽象方法，该类必须被限定为抽象的。抽象类可以不包含抽象方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseActivity</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">TAG</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.getClass().getSimpleName(); <span class="hljs-comment">//抽象类可以有成员</span><br><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">log</span><span class="hljs-params">(String msg)</span>&#123;   <span class="hljs-comment">//抽象类可以有具体方法</span><br>        System.out.println(msg);<br>    &#125;<br><br><span class="hljs-comment">//    abstract void initView();     //抽象类也可以没有抽象方法</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>区别</strong></p>
+<ul>
+<li><p>抽象类它的作用就是：定义规范，强制子类符合标准；如果有调用抽象方法，也会制定执行顺序的规则</p>
+</li>
+<li><p>抽象层次不同</p>
+<ul>
+<li>抽象类是对类抽象，而接口是对行为的抽象</li>
+<li>抽象类是对整个类 括属性、行为，但是接口却是对类局部行为进行抽象</li>
+</ul>
+</li>
+<li><p>跨域不同</p>
+<ul>
+<li>抽象类所跨域的是具有相似特点的类，而接口却可以跨域不同的类</li>
+<li>抽象类所体现的是一种继承关系，考虑的是子类与父类本质“是不是”同一类的关系</li>
+<li>而接口并不要求实现的类与接口是同一本质，它们之间只存在“有没有这个能力”的关系</li>
+</ul>
+</li>
+<li><p>设计层次不同</p>
+</li>
+<li><p>抽象类是自下而上的设计，在子类中重复出现的工作，抽象到抽象类中</p>
+</li>
+<li><p>接口是自上而下，定义行为和规范</p>
+</li>
+</ul>
+<p><img src="/img/blog/image-20250405151525848.png" srcset="/img/loading.gif" lazyload alt="image-20250405151525848"></p>
+<p>“我一般在设计中，如果是为了提供一组规范或行为能力，比如 <code>Serializable</code>、<code>Runnable</code> 这种，就用接口；如果是为了统一父类的属性、方法和生命周期控制，像 <code>HttpServlet</code>、<code>AbstractList</code> 这种，就会使用抽象类。</p>
+<h1 id="局部变量和全局变量-java里如何表示这两个"><a href="#局部变量和全局变量-java里如何表示这两个" class="headerlink" title="局部变量和全局变量 java里如何表示这两个"></a>局部变量和全局变量 java里如何表示这两个</h1><h1 id="进程和线程，为什么线程切换开销小-进程切换时要恢复哪些东西"><a href="#进程和线程，为什么线程切换开销小-进程切换时要恢复哪些东西" class="headerlink" title="进程和线程，为什么线程切换开销小, 进程切换时要恢复哪些东西"></a>进程和线程，为什么线程切换开销小, 进程切换时要恢复哪些东西</h1><p><strong>1.为什么线程切换小</strong></p>
+<p><strong>线程是进程的最小执行单元，多个线程共享一个进程的资源（如内存空间、文件句柄等）。<strong>所以线程切换不需要切换</strong>这些共享资源</strong>，开销更小。</p>
+<p>线程上下文切换一般涉及：</p>
+<ul>
+<li><strong>CPU 寄存器内容保存&#x2F;恢复</strong></li>
+<li><strong>程序计数器（PC）保存&#x2F;恢复</strong></li>
+<li><strong>线程栈切换</strong></li>
+</ul>
+<p><strong>2.进程切换时要恢复哪些东西</strong></p>
+<p>除了线程切换要做的操作，<strong>进程切换额外需要</strong>：</p>
+<p><img src="/img/blog/image-20250414151417619.png" srcset="/img/loading.gif" lazyload alt="image-20250414151417619"></p>
+<p><strong>三、 线程切换的详细步骤（微观视角）</strong></p>
+<p>当发生线程切换时，操作系统会严格执行以下步骤：</p>
+<p><strong>1. 陷入内核（User Mode -&gt; Kernel Mode）</strong></p>
+<p>线程通常运行在用户态（Ring 3）。无论是时间片用完引发的硬件中断，还是 I&#x2F;O 阻塞引发的系统调用，都会导致 CPU 暂停当前指令，<strong>权限提升</strong>，跳转到操作系统的内核态（Ring 0）去执行中断处理程序。</p>
+<p><strong>2. 保存线程 A 的上下文</strong></p>
+<p>进入内核后，操作系统会将 CPU 寄存器里的所有当前值，拷贝到**线程 A 的 TCB（线程控制块）**中保存起来。</p>
+<p><strong>3. 调度器介入（Scheduler）</strong></p>
+<p>操作系统的调度算法（如 Linux 的 CFS 完全公平调度器）开始运行。它会遍历就绪队列，根据优先级、等待时间等规则，<strong>挑选出下一个要运行的线程 B</strong>。</p>
+<p><strong>4. 恢复线程 B 的上下文</strong></p>
+<p>调度器选中线程 B 后，找到<strong>线程 B 的 TCB</strong>，将其之前保存的寄存器数据、PC 指针、栈指针等，<strong>重新加载回 CPU 的物理寄存器中</strong>。</p>
+<p><strong>5. 退出内核（Kernel Mode -&gt; User Mode）</strong></p>
+<p>权限降级，CPU 根据刚刚加载的线程 B 的程序计数器（PC）指定的地址，跳转回用户空间，开始执行线程 B 的代码。</p>
+<h1 id="java异常机制，Exception下面细分了什么？"><a href="#java异常机制，Exception下面细分了什么？" class="headerlink" title="java异常机制，Exception下面细分了什么？"></a>java异常机制，Exception下面细分了什么？</h1><p>Exception 异常又可分为两大类：运行时异常和非运行时异常(编译异常)。程序中应当尽可能去处理这些异常。        </p>
+<ul>
+<li><p>运行时异常：RuntimeException类及其子类异常，如NullPointerException(空指针异常)、IndexOutOfBoundsException(下标越界异常)等，这些异常是不可查异常，程序中可以选择捕获处理，也可以不处理。这些异常一般是由程序逻辑错误引起的，程序应该从逻辑角度尽可能避免这类异常的发生。       </p>
+</li>
+<li><p>运行时异常的特点：Java编译器不会检查它，也就是说，当程序中出现这类异常时，也会编译通过。        </p>
+</li>
+<li><p>非运行时异常 （编译异常）：是RuntimeException以外的异常，类型上都属于Exception类及其子类。从程序语法角度讲是必须进行处理的异常，如果不处理，程序就不能编译通过。如IOException、SQLException等以及用户自定义的Exception异常，一般情况下不自定义检查异常。</p>
+</li>
+</ul>
+<p>“Java 的异常体系都继承自 <strong>Throwable</strong>。</p>
+<p>Throwable 分为两大类：</p>
+<ol>
+<li><strong>Error</strong>：代表 JVM 自身的严重错误，比如 <strong>OOM</strong>。程序通常无法处理，也无需捕获。</li>
+<li><strong>Exception</strong>：代表程序可以处理的异常。它又分为两类：<ul>
+<li><strong>受检异常 (Checked Exception)</strong>：比如 IOException。编译器会<strong>强制</strong>我们必须用 try-catch 或 throws 处理，因为它们通常是可预见的外部问题。</li>
+<li><strong>非受检异常 (Unchecked Exception)</strong>：也就是 RuntimeException 及其子类，比如 <strong>NullPointerException</strong>。它们通常是<strong>代码逻辑 Bug</strong>，编译器不强制处理。”</li>
+</ul>
+</li>
+</ol>
+<h1 id="线程里start方法和run方法有什么区别-start会开启新线程，run不会开启新线程，扔给调用者"><a href="#线程里start方法和run方法有什么区别-start会开启新线程，run不会开启新线程，扔给调用者" class="headerlink" title="线程里start方法和run方法有什么区别(start会开启新线程，run不会开启新线程，扔给调用者)"></a>线程里start方法和run方法有什么区别(start会开启新线程，run不会开启新线程，扔给调用者)</h1><h1 id="java的序列化要实现一个接口，这个接口有一个序列号UID，这个UID有啥用？-UID怎么来的有了解吗"><a href="#java的序列化要实现一个接口，这个接口有一个序列号UID，这个UID有啥用？-UID怎么来的有了解吗" class="headerlink" title="java的序列化要实现一个接口，这个接口有一个序列号UID，这个UID有啥用？,UID怎么来的有了解吗"></a>java的序列化要实现一个接口，这个接口有一个序列号UID，这个UID有啥用？,UID怎么来的有了解吗</h1><p>当一个类实现 <code>Serializable</code> 接口后，Java 允许它的对象被序列化（转换为字节流）并存储或传输。但是，在反序列化时，JVM <strong>会检查当前类的 <code>serialVersionUID</code> 是否与序列化时的 UID 相匹配</strong>，如果不匹配，就会抛出 <code>InvalidClassException</code>，表示该类已经发生了不兼容的修改。</p>
+<p><strong>怎么来的</strong></p>
+<p><strong>1.手动指定 <code>serialVersionUID</code></strong></p>
+<p><strong>2.自动生成 <code>serialVersionUID</code></strong></p>
+<p>“Java 序列化就是把对象转成字节流。主要用于 <strong>RPC 远程调用</strong> 和 <strong>对象持久化</strong>。<br>不过在实际开发中，我们很少用 JDK 自带的 Serializable，因为它性能差且不能跨语言。我们通常使用 <strong>JSON</strong>（HTTP 接口）或者 <strong>Protobuf&#x2F;Hessian</strong>（内部 RPC）来替代它。”</p>
+<h1 id="Volatile底层实现-什么场景需要使用volatile关键字？volatile能否保证数组元素的可见性？如何解决？"><a href="#Volatile底层实现-什么场景需要使用volatile关键字？volatile能否保证数组元素的可见性？如何解决？" class="headerlink" title="Volatile底层实现,什么场景需要使用volatile关键字？volatile能否保证数组元素的可见性？如何解决？"></a>Volatile底层实现,什么场景需要使用volatile关键字？volatile能否保证数组元素的可见性？如何解决？</h1><p>.volatile的作用**</p>
+<p>并发编程中有3大重要特性，了解一下：</p>
+<ul>
+<li>原子性</li>
+</ul>
+<p>一个操作或者多个操作，要么全部执行成功，要么全部执行失败。满足原子性的操作，中途不可被中断。</p>
+<ul>
+<li>可见性</li>
+</ul>
+<p>多个线程共同访问共享变量时，某个线程修改了此变量，其他线程能立即看到修改后的值。</p>
+<ul>
+<li>有序性</li>
+</ul>
+<p>程序执行的顺序按照代码的先后顺序执行。（由于<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=117876104&content_type=Article&match_order=1&q=JMM&zhida_source=entity">JMM</a>模型中允许编译器和处理器为了效率，进行指令重排序的优化。指令重排序在单线程内表现为串行语义，在多线程中会表现为无序。那么多线程并发编程中，就要考虑如何在多线程环境下可以允许部分指令重排，又要保证有序性）</p>
+<p><code>synchronized</code>关键字同时保证上述三种特性。</p>
+<ul>
+<li><code>synchronized</code>是同步锁，同步块内的代码相当于同一时刻单线程执行，故不存在原子性和指令重排序的问题</li>
+<li><code>synchronized</code>关键字的语义JMM有两个规定，保证其实现内存可见性：</li>
+<li>线程解锁前，必须把共享变量的最新值刷新到主内存中；</li>
+<li>线程加锁前，将清空工作内存中共享变量的值，从主内存中冲洗取值。</li>
+</ul>
+<p><code>volatile</code>关键字作用的是保证<strong>可见性</strong>和<strong>有序性</strong>，并不保证原子性。</p>
+<p><strong>2.volatile变量的可见性</strong></p>
+<p>JMM中规定所有的变量都存储在主内存（Main Memory）中，每条线程都有自己的工作内存（Work Memory），线程的工作内存中保存了该线程所使用的变量的从主内存中拷贝的副本。线程对于变量的读、写都必须在工作内存中进行，而不能直接读、写主内存中的变量。同时，本线程的工作内存的变量也无法被其他线程直接访问，必须通过主内存完成。</p>
+<p>整体内存模型如下图所示：</p>
+<p><img src="/img/blog/jbxyf-remote-07.jpg" srcset="/img/loading.gif" lazyload alt="img"> </p>
+<p>对于普通共享变量，线程A将变量修改后，体现在此线程的工作内存。在尚未同步到主内存时，若线程B使用此变量，从主内存中获取到的是修改前的值，便发生了共享变量值的不一致，也就是出现了<strong>线程的可见性问题</strong>。</p>
+<p><code>volatile</code>定义：</p>
+<ul>
+<li>当对volatile变量执行写操作后，JMM会把工作内存中的最新变量值强制刷新到主内存</li>
+<li>写操作会导致其他线程中的缓存无效</li>
+</ul>
+<p>这样，其他线程使用缓存时，发现本地工作内存中此变量无效，便从主内存中获取，这样获取到的变量便是最新的值，实现了线程的可见性。</p>
+<p><strong>3.volatile变量的禁止指令重排序</strong></p>
+<p><code>volatile</code>是通过编译器在生成字节码时，在指令序列中添加“<strong><a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=117876104&content_type=Article&match_order=1&q=%E5%86%85%E5%AD%98%E5%B1%8F%E9%9A%9C&zhida_source=entity">内存屏障</a></strong>”来禁止指令重排序的。</p>
+<p><img src="/img/blog/image-20250316162552210.png" srcset="/img/loading.gif" lazyload alt="image-20250316162552210"> </p>
+<p>JVM的实现会在volatile读写前后均加上内存屏障，在一定程度上保证有序性。如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java">LoadLoadBarrier<br><span class="hljs-keyword">volatile</span> 读操作<br>LoadStoreBarrier<br><br>StoreStoreBarrier<br><span class="hljs-keyword">volatile</span> 写操作<br>StoreLoadBarrier<br></code></pre></td></tr></table></figure>
+
+<p>因为 <code>volatile</code> 修饰的是 <strong>数组引用本身</strong>，而不是 <strong>数组里的元素</strong>。</p>
+<p><img src="/img/blog/image-20260307105614220.png" srcset="/img/loading.gif" lazyload alt="image-20260307105614220"></p>
+<h1 id="java的异常与error-Java中的异常总结详解（异常类型、声明异常、抛出异常、捕获异常）-声明异常的关键字是-抛出异常的关键字是-捕捉异常的关键字是-CSDN博客"><a href="#java的异常与error-Java中的异常总结详解（异常类型、声明异常、抛出异常、捕获异常）-声明异常的关键字是-抛出异常的关键字是-捕捉异常的关键字是-CSDN博客" class="headerlink" title="java的异常与error(Java中的异常总结详解（异常类型、声明异常、抛出异常、捕获异常）_声明异常的关键字是 ,抛出异常的关键字是 ,捕捉异常的关键字是-CSDN博客)"></a>java的异常与error(<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46316970/article/details/119898445">Java中的异常总结详解（异常类型、声明异常、抛出异常、捕获异常）_声明异常的关键字是 ,抛出异常的关键字是 ,捕捉异常的关键字是-CSDN博客</a>)</h1><h1 id="java对象完整的生命周期（从加载过程开始）"><a href="#java对象完整的生命周期（从加载过程开始）" class="headerlink" title="java对象完整的生命周期（从加载过程开始）"></a>java对象完整的生命周期（从加载过程开始）</h1><p><strong>1.先加载类</strong></p>
+<ul>
+<li>加载：类加载器负责加载类文件,将其字节码加载到内存中</li>
+<li>验证：验证确保加载的类文件格式正确且符合 JVM 规范，防止非法的类定义进入运行时环境。</li>
+<li>准备：在此阶段，JVM 为静态变量分配内存，并设置默认值。此时不会执行任何初始化逻辑。</li>
+<li>解析: 涉及符号引用转换为直接引用。例如，方法调用和字段访问指令中的符号引用会被替换为具体的内存地址。</li>
+<li>初始化：初始化阶段执行类构造器 () 方法，其中包括静态变量赋值和静态代码块的执行。</li>
+</ul>
+<p>**2.内存分配:**在类加载完成后，JVM会在堆内存为对象分配空间（一般在eden区分配，如果对象过大可能会在老年代分配）</p>
+<p><strong>3.构造函数的调用</strong>：通过构造函数来初始化对象，设置对象的初始状态</p>
+<p><strong>4.应用阶段</strong></p>
+<p><strong>5.不可达阶段</strong>：当对象不在被任何变量引用时，他就变成不可达对象（GC root）</p>
+<p><strong>6.Gc阶段：垃圾回收释放内  存</strong></p>
+<p><strong>7.销毁阶段：JVM 真正回收对象的内存</strong></p>
+<p><strong>额外知识</strong></p>
+<ul>
+<li><strong>强引用（Strong Reference）</strong>：普通引用，不可回收</li>
+<li><strong>软引用（Soft Reference）</strong>：内存不足时才回收</li>
+<li><strong>弱引用（Weak Reference）</strong>：GC 扫描时就回收</li>
+<li><strong>虚引用（Phantom Reference）</strong>：用于检测对象被回收的时机</li>
+</ul>
+<h1 id="java的cas操作是怎么实现的，unsafe底层层面是怎么样实现的"><a href="#java的cas操作是怎么实现的，unsafe底层层面是怎么样实现的" class="headerlink" title="java的cas操作是怎么实现的，unsafe底层层面是怎么样实现的"></a>java的cas操作是怎么实现的，unsafe底层层面是怎么样实现的</h1><h1 id="Java动态代理的实现原理及使用场景？-java动态代理实现与原理详细分析-Gonjian-博客园"><a href="#Java动态代理的实现原理及使用场景？-java动态代理实现与原理详细分析-Gonjian-博客园" class="headerlink" title="Java动态代理的实现原理及使用场景？(java动态代理实现与原理详细分析 - Gonjian - 博客园)"></a>Java动态代理的实现原理及使用场景？(<a target="_blank" rel="noopener" href="https://www.cnblogs.com/gonjan-blog/p/6685611.html">java动态代理实现与原理详细分析 - Gonjian - 博客园</a>)</h1><h1 id="Java-语言线程模型，现在使用的是什么线程模型"><a href="#Java-语言线程模型，现在使用的是什么线程模型" class="headerlink" title="Java 语言线程模型，现在使用的是什么线程模型"></a>Java 语言线程模型，现在使用的是什么线程模型</h1><p>目前，Java 语言主要采用<strong>基于操作系统原生线程的 1:1 模型</strong>。这意味着每个 Java 线程 (java.lang.Thread) 都直接映射到一个操作系统的内核级线程。此外，从 Java 21 开始，<strong>虚拟线程（Virtual Threads）</strong> 作为一项重大革新被正式引入，为高并发场景提供了更高效的解决方案。</p>
+<p><strong>1. 主流的 1:1 线程模型</strong></p>
+<p>自 JDK 1.2 版本以来，Java 就放弃了早期的“绿色线程”（在 JVM 层面模拟的线程），转向了与操作系统更紧密结合的 1:1 线程模型。</p>
+<p><strong>核心机制：</strong></p>
+<ul>
+<li><strong>一对一映射</strong>：每一个你通过 new Thread() 创建的 Java 线程，JVM 都会请求操作系统为其创建一个对应的内核线程。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHYtsKltDK8AS9wY6aacE423LrrLz9V3jU_zs1mnL-ekRc9SaMR4dWsiDRVH39I_E8BppFaz2Vnrdg35VVAV7ztZae5HUjpOclmzNOncuwTR1_YwHDN_p3ejbO_mpoGCSieM6rkpd5Mwg==">3</a>] 之后，这个 Java 线程的生命周期就与该内核线程绑定。</li>
+<li><strong>依赖 OS 调度</strong>：线程的调度完全由操作系统内核的调度器来负责。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG2upO_rPSCGeL8DoveYUSdLQpwWbzwA3osI0oL5Q7xbbcIB7Tmg3I6bcrrIcFB-Cn4Vb3TvclciLsJxt7fX0gBKR9hzWq5EoYKHfcBHqA0ZuheGl01oBMnDOsnckOT2lZ8-0LTmTyBSQ1kShSAZqr9ujQAhO6RTGHY1imKCUXkbA==">2</a>] Java 线程的优先级（Thread.setPriority()）只是向操作系统提供的一个建议，并不保证严格执行。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHYtsKltDK8AS9wY6aacE423LrrLz9V3jU_zs1mnL-ekRc9SaMR4dWsiDRVH39I_E8BppFaz2Vnrdg35VVAV7ztZae5HUjpOclmzNOncuwTR1_YwHDN_p3ejbO_mpoGCSieM6rkpd5Mwg==">3</a>]</li>
+<li><strong>重量级资源</strong>：由于内核线程的创建、切换和销毁都需要陷入内核态，这些操作会消耗相当大的系统资源。因此，可以创建的平台线程数量是有限的。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF0r7gORMc9ABqq6_l6LCjC3c12mnrNo-lcuz16KnvkItFXXVVd37jVJIehiMJIFtFbjAauC-ET0NzmOdy6Ei2qLulrYktLYoWYlfzrkbNqm8R96Buhddgodo7OuaU_XXHOS4PUOTcSrbh8HqM=">4</a>]</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>实现简单</strong>：线程的创建和管理都委托给了操作系统，简化了 JVM 的设计。</li>
+<li><strong>充分利用多核</strong>：由于直接使用操作系统线程，可以无缝地利用多核 CPU 的并行处理能力。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHYtsKltDK8AS9wY6aacE423LrrLz9V3jU_zs1mnL-ekRc9SaMR4dWsiDRVH39I_E8BppFaz2Vnrdg35VVAV7ztZae5HUjpOclmzNOncuwTR1_YwHDN_p3ejbO_mpoGCSieM6rkpd5Mwg==">3</a>] 一个 Java 线程阻塞，不会影响其他线程的执行。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGsxPeQJJ_ZthBSdwTOY5azehljkAZSm7VeTQHhGifAEbMHlfLAUWnXIE4on4O_aBgDJ-ItvOFy7RkAFpXBl_A9TNRE07GNdgmPobD1RufaHLXy6vT92UyYgdU9zWfGgUf6NMiJy39Pkw==">5</a>]</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li><strong>资源开销大</strong>：线程的创建和上下文切换成本较高，不适合需要大量线程的场景。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF0r7gORMc9ABqq6_l6LCjC3c12mnrNo-lcuz16KnvkItFXXVVd37jVJIehiMJIFtFbjAauC-ET0NzmOdy6Ei2qLulrYktLYoWYlfzrkbNqm8R96Buhddgodo7OuaU_XXHOS4PUOTcSrbh8HqM=">4</a>]</li>
+<li><strong>数量受限</strong>：受限于操作系统对线程数量的限制。</li>
+</ul>
+<p><strong>2. 面向未来的虚拟线程（Project Loom）</strong></p>
+<p>为了解决 1:1 模型在超高并发场景下的局限性，Java 引入了虚拟线程（最初作为 Project Loom 的一部分）。该特性在 Java 21 中已经成熟稳定。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHZsjleT21PdlqdxlKbJsw17CDbwVy3KnNzl4ZTA05BBRDxLWlWqQ-Rf7hDcPiyW-GKPBeUdroOz0k2FW6knZq-UQgd7wpT76M4XQUCdAz_Gwbe0VMWMW3OZwHGOOQSq2kZmLtNhI51Twt2IEuwHuANSCA4k_cKfrH6bv6zmLA=">6</a>]</p>
+<p><strong>核心机制：</strong></p>
+<ul>
+<li><strong>轻量级线程</strong>：虚拟线程是由 JVM 管理的轻量级用户线程，它并不直接与特定的操作系统线程绑定。</li>
+<li><strong>M:N 调度</strong>：多个（M）虚拟线程可以被 JVM 调度运行在少数（N）的平台线程上（这些平台线程仍然是 1:1 模型的内核线程）。JVM 内部的调度器负责在虚拟线程发生阻塞（如 I&#x2F;O 操作）时，将其从平台线程上卸下，并换上另一个可运行的虚拟线程。</li>
+<li><strong>极低开销</strong>：创建和切换虚拟线程的成本远低于平台线程，因为这个过程在 JVM 内部完成，无需内核态切换。这使得创建数百万个虚拟线程成为可能。[<a target="_blank" rel="noopener" href="https://www.google.com/url?sa=E&q=https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHZsjleT21PdlqdxlKbJsw17CDbwVy3KnNzl4ZTA05BBRDxLWlWqQ-Rf7hDcPiyW-GKPBeUdroOz0k2FW6knZq-UQgd7wpT76M4XQUCdAz_Gwbe0VMWMW3OZwHGOOQSq2kZmLtNhI51Twt2IEuwHuANSCA4k_cKfrH6bv6zmLA=">6</a>]</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li><strong>高吞吐量</strong>：非常适合 I&#x2F;O 密集型和高并发的应用，可以极大地提升应用的吞吐能力。</li>
+<li><strong>简化编程模型</strong>：开发者可以用传统“一个请求一个线程”的同步阻塞式代码，来编写具有异步非阻塞性能的程序，避免了回调地狱（Callback Hell）。</li>
+</ul>
+<p><img src="/img/blog/image-20250916225616548.png" srcset="/img/loading.gif" lazyload alt="image-20250916225616548"></p>
+<h1 id="protected-修饰符的作用域，什么时候用protected-修饰符的作用域"><a href="#protected-修饰符的作用域，什么时候用protected-修饰符的作用域" class="headerlink" title="protected 修饰符的作用域，什么时候用protected 修饰符的作用域"></a>protected 修饰符的作用域，什么时候用protected 修饰符的作用域</h1><p>protected 是 Java 的四个访问控制修饰符之一（另外三个是 public、private 和 default (包私有)）。它的作用域可以理解为两个部分的并集：</p>
+<ol>
+<li><strong>包内可见 (Package-Private)</strong>：同一个包（package）中的任何类都可以访问被 protected 修饰的成员（字段、方法或内部类）。这一点和 default (不写任何修饰符) 的作用域是相同的。</li>
+<li><strong>子类可见 (Subclass-Visible)</strong>：在不同包中，只有该类的子类可以访问其父类的 protected 成员。</li>
+</ol>
+<p>这些连接点（protected 成员）的特点是：</p>
+<ol>
+<li><strong>对普通玩家是隐藏的</strong>：一个只是“玩”车的人（外部类），根本不需要也看不到这些底盘上的连接点。对他来说，车是一个整体。</li>
+<li><strong>专门为改装者准备</strong>：一个想“改装”这辆车的玩家（子类），他需要拿到你的设计，然后他可以利用你预留的这些 protected 连接点，装上他自己的高性能配件。</li>
+</ol>
+<p><strong>protected</strong> <strong>就是父类给子类开放的、用于扩展和定制的“内部接口”或“工具”。它对外界是封闭的，但对“自家人”（子类）是开放的。</strong></p>
+<h1 id="满足什么条件时，一个-Java-类会被卸载？"><a href="#满足什么条件时，一个-Java-类会被卸载？" class="headerlink" title="满足什么条件时，一个 Java 类会被卸载？"></a>满足什么条件时，一个 Java 类会被卸载？</h1><p>类卸载非常罕见，主要发生在大量使用动态类生成（如 CGLib）或热部署的场景。<br>必须同时满足三个条件：<strong>实例没了、ClassLoader 没了、Class 对象没引用了</strong>。<br>只要是 JDK 自带类加载器加载的类，基本不会被卸载。”</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AF%AD%E8%A8%80/" class="category-chain-item">语言</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E8%AF%AD%E8%A8%80/Java/" class="category-chain-item">Java</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Java/" class="print-no-link">#Java</a>
+      
+        <a href="/tags/%E5%9F%BA%E7%A1%80/" class="print-no-link">#基础</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java基础语法</div>
+      <div>https://kyy-logs.github.io/2026/04/09/语言/java/Java基础语法/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yangyang Kong</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年4月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/" title="JVM">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JVM</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
+                        <span class="hidden-mobile">设计模式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"kyy-logs/review-repository","repo-id":"R_kgDOR9LLEQ","category":"General","category-id":"DIC_kwDOR9LLEc4C6Yb2","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"bottom","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

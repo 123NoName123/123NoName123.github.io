@@ -1,0 +1,15 @@
+.markdown-body strong {
+  font-weight: 700;
+}
+
+.markdown-body mark {
+  background-color: #fff200;
+  color: #111111;
+  padding: 0 0.2em;
+  border-radius: 0.2em;
+}
+
+html[data-user-color-scheme='dark'] .markdown-body mark {
+  background-color: #ffe600;
+  color: #111111;
+}
