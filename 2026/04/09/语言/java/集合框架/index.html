@@ -9,7 +9,7 @@
   <meta charset="UTF-8">
 
   <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
-  <link rel="icon" href="/img/cat.ico">
+  <link rel="icon" href="/img/fluid.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -26,22 +26,21 @@
 <meta property="og:site_name" content="多云的小站">
 <meta property="og:description" content="介绍一下HashMap。（扩容机制、寻址、为什么扩容是二倍）,什么要选红黑树；可以用跳表来替换红黑树吗什么时候触发扩容：  当size &gt;&#x3D; capicity * threshhold会触发一次扩容 当链表的长度&gt;&#x3D;8, 并且数组长度&lt; 64时也会触发一次扩容。  HashMap中怎样解决hash冲突。1.解决Hash冲突的方法有四种 开放定址法也称线性探测法">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/40ec89c9c2848d6cdbbbc16814c2499c.jpeg#pic_center">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d9a8d6d00e84cc1a933afcd55b028df~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/60dcf839a914476f81e9d3ddfab5b5d5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b0690ec874364f80aabe90e7b2895457~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/900b9a35286d4a60a4a2c9c617633a3d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c05558d5c9e0472587bfcc6094adaf26~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9860f8015ca546d483e89c82b7d2851c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
-<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/888a814d6a9948dbb5f8a27cd1f84c5c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-assign.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-lastrun.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-linklist.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-rbtree.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-getput.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-concurrent.awebp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-finish.awebp">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107165251024.png">
 <meta property="article:published_time" content="2026-04-09T14:28:06.000Z">
-<meta property="article:modified_time" content="2026-04-11T02:05:25.866Z">
+<meta property="article:modified_time" content="2026-05-12T15:40:46.171Z">
 <meta property="article:author" content="Yangyang Kong">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="集合">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/40ec89c9c2848d6cdbbbc16814c2499c.jpeg#pic_center">
+<meta name="twitter:image" content="https://kyy-logs.github.io/img/blog/image-chm-transfer-assign.awebp">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -253,6 +252,18 @@
           
           
             <li class="nav-item">
+              <a class="nav-link" href="/ai/" target="_self">
+                
+                <span>Ai</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
               <a class="nav-link" href="/algorithm/" target="_self">
                 <i class="iconfont icon-launch-fill"></i>
                 <span>算法</span>
@@ -384,7 +395,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          6k 字
         
       </span>
     
@@ -395,7 +406,7 @@
         
         
         
-          30 分钟
+          50 分钟
         
       </span>
     
@@ -457,7 +468,6 @@
 </ul>
 <h2 id="HashMap中怎样解决hash冲突。"><a href="#HashMap中怎样解决hash冲突。" class="headerlink" title="HashMap中怎样解决hash冲突。"></a>HashMap中怎样解决hash冲突。</h2><p><strong>1.解决Hash冲突的方法有四种</strong></p>
 <p>开放定址法也称线性探测法，就是从发生冲突的那个位置开始，按照一定次序从Hash表找到一个空闲位置然后把发生冲突的元素存入到这个位置，而在java中，ThreadLocal就用到了线性探测法来解决Hash冲突</p>
-<p><img src="https://i-blog.csdnimg.cn/blog_migrate/40ec89c9c2848d6cdbbbc16814c2499c.jpeg#pic_center" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
 <p><strong>2.链式寻址法，这是一种常见的方法，简单理解就是把存在Hash冲突的key，以单向链表来进行存储，比如HashMap</strong></p>
 <p><strong>3.再Hash法，就是通过某个Hash函数计算的key，存在冲突的时候，再用另外一个Hash函数对这个可以进行Hash，一直运算，直到不再产生冲突为止，这种方式会增加计算的一个时间,性能上呢会有一些影响</strong></p>
 <h2 id="hashMap用红黑树，不用平衡二叉树？"><a href="#hashMap用红黑树，不用平衡二叉树？" class="headerlink" title="hashMap用红黑树，不用平衡二叉树？"></a>hashMap用红黑树，不用平衡二叉树？</h2><p>有人专门测过，在处理大数据量的时候，平衡二叉树和红黑树效率几乎差不多，他俩区别在于，红黑树在不平衡时调整树节点的效率和操作比AVL要更好设计和实现  </p>
@@ -553,32 +563,31 @@
 <ul>
 <li><strong>多线程开始扩容</strong></li>
 </ul>
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1d9a8d6d00e84cc1a933afcd55b028df~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BcM5rt.jpg" style="zoom: 80%;" />
-
+<p><img src="/../../../img/blog/image-chm-transfer-assign.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-assign"></p>
 <ul>
-<li><p><strong>lastrun节点</strong></p>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/60dcf839a914476f81e9d3ddfab5b5d5~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BcM2Pe.jpg"></p>
-</li>
-<li><p>链表迁移</p>
-</li>
+<li><strong>lastrun节点</strong></li>
 </ul>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b0690ec874364f80aabe90e7b2895457~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BcMW2d.jpg"></p>
+<p><img src="/../../../img/blog/image-chm-transfer-lastrun.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-lastrun"></p>
+<ul>
+<li>链表迁移</li>
+</ul>
+<p><img src="/../../../img/blog/image-chm-transfer-linklist.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-linklist"></p>
 <ul>
 <li><strong>红黑树迁移</strong></li>
 </ul>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/900b9a35286d4a60a4a2c9c617633a3d~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BcMR8H.jpg"></p>
+<p><img src="/../../../img/blog/image-chm-transfer-rbtree.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-rbtree"></p>
 <ul>
 <li><strong>迁移过程中get和put的操作的处理</strong></li>
 </ul>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c05558d5c9e0472587bfcc6094adaf26~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BcMc5D.jpg"></p>
+<p><img src="/../../../img/blog/image-chm-transfer-getput.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-getput"></p>
 <ul>
 <li><strong>并发迁移</strong></li>
 </ul>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9860f8015ca546d483e89c82b7d2851c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BcMfxA.jpg"></p>
+<p><img src="/../../../img/blog/image-chm-transfer-concurrent.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-concurrent"></p>
 <ul>
 <li><strong>迁移完成</strong></li>
 </ul>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/888a814d6a9948dbb5f8a27cd1f84c5c~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp" srcset="/img/loading.gif" lazyload alt="BclH3Q.jpg"></p>
+<p><img src="/../../../img/blog/image-chm-transfer-finish.awebp" srcset="/img/loading.gif" lazyload alt="image-chm-transfer-finish"></p>
 <p>小结 <code>transfer</code>:</p>
 <ol>
 <li>根据 CPU 核心数确定每个线程负责的桶数，默认每个线程16个桶</li>
@@ -593,7 +602,156 @@
 
 <p>再遍历到数组tab[i]时他执行了fwd节点，hash&#x3D;-1。</p>
 <p><code>setTabAt(tab, i, fwd)</code> 的意思是：<strong>把 <code>tab[i]</code> 这个槽位替换为一个新的节点 <code>fwd</code>，它是 <code>ForwardingNode</code>，它的 hash 是 -1，不是修改原节点，而是彻底换掉原节点</strong>。</p>
-<p><img src="/img/blog/image-20260107165251024.png" srcset="/img/loading.gif" lazyload alt="image-20260107165251024"></p>
+<p><img src="/../../../img/blog/image-20260107165251024.png" srcset="/img/loading.gif" lazyload alt="image-20260107165251024"></p>
+<h1 id="其它重要集合知识点（补充）"><a href="#其它重要集合知识点（补充）" class="headerlink" title="其它重要集合知识点（补充）"></a>其它重要集合知识点（补充）</h1><h2 id="Collections-工具类"><a href="#Collections-工具类" class="headerlink" title="Collections 工具类"></a><code>Collections</code> 工具类</h2><ul>
+<li><strong><code>sort</code> &#x2F; <code>binarySearch</code></strong>：依赖元素实现 <code>Comparable</code> 或传入 <code>Comparator</code>；<code>binarySearch</code> 前集合必须已按同一比较规则有序。</li>
+<li><strong><code>shuffle</code>、<code>reverse</code>、<code>rotate</code>、<code>fill</code></strong>：原地修改指定 <code>List</code>。</li>
+<li><strong><code>synchronizedXxx</code> 与 <code>checkedXxx</code></strong>：同步包装器在方法级加锁，并发性能一般；<code>checked</code> 可在运行时检查是否误插类型（泛型擦除场景下的调试辅助）。</li>
+<li><strong><code>unmodifiableXxx</code></strong>：返回<strong>不可修改视图</strong>，底层仍指向原集合；若原集合后续被修改，视图内容也会变，只是不能通过视图自身去增删。</li>
+</ul>
+<h2 id="迭代：fail-fast-与-fail-safe"><a href="#迭代：fail-fast-与-fail-safe" class="headerlink" title="迭代：fail-fast 与 fail-safe"></a>迭代：<code>fail-fast</code> 与 <code>fail-safe</code></h2><ul>
+<li><strong><code>ArrayList</code>、<code>HashMap</code> 等</strong>：迭代中若检测到<strong>结构性修改</strong>（非迭代器自身的 <code>remove</code>），会抛 <code>ConcurrentModificationException</code>，依赖 <code>modCount</code> 与 <code>expectedModCount</code>。</li>
+<li><strong><code>CopyOnWriteArrayList</code></strong>：迭代基于<strong>快照</strong>，弱一致、不抛上述异常，适合读多写少；写时复制整段数组，写频繁时成本高。</li>
+</ul>
+<h2 id="Queue-Deque-常见实现"><a href="#Queue-Deque-常见实现" class="headerlink" title="Queue &#x2F; Deque 常见实现"></a><code>Queue</code> &#x2F; <code>Deque</code> 常见实现</h2><table>
+<thead>
+<tr>
+<th>类</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong><code>PriorityQueue</code></strong></td>
+<td>小顶堆（默认），非线程安全；迭代顺序<strong>不等于</strong>优先级顺序，应按 <code>poll</code> 取。</td>
+</tr>
+<tr>
+<td><strong><code>ArrayDeque</code></strong></td>
+<td>双端队列，<strong>无容量上限时</strong>可作栈&#x2F;队列；禁止 <code>null</code>；通常比 <code>LinkedList</code> 栈更省内存与缓存友好。</td>
+</tr>
+<tr>
+<td><strong><code>LinkedList</code></strong></td>
+<td>实现 <code>Deque</code>，节点分散，随机访问差；若主要当栈&#x2F;队列且元素多，可优先考虑 <code>ArrayDeque</code>。</td>
+</tr>
+</tbody></table>
+<p><strong>阻塞队列（<code>java.util.concurrent</code>）</strong>（常与线程池、生产者消费者配合）：</p>
+<ul>
+<li><strong><code>ArrayBlockingQueue</code></strong>：有界数组，一把锁或分离锁实现因版本而异，适合固定容量背压。</li>
+<li><strong><code>LinkedBlockingQueue</code></strong>：可选有界&#x2F;默认近似无界，注意默认容量为 <code>Integer.MAX_VALUE</code> 时可能堆积导致内存风险。</li>
+<li><strong><code>SynchronousQueue</code></strong>：不缓存元素，<code>put</code> 直到有线程 <code>take</code>；适合直接交接任务。</li>
+<li><strong><code>DelayQueue</code></strong>：元素需实现 <code>Delayed</code>，按到期时间出队，用于定时任务、缓存过期等。</li>
+</ul>
+<h2 id="Set-与有序性"><a href="#Set-与有序性" class="headerlink" title="Set 与有序性"></a><code>Set</code> 与有序性</h2><ul>
+<li><strong><code>HashSet</code></strong>：内部是 <code>HashMap</code>，元素即 key，<code>value</code> 为固定占位对象；无序、允许 <code>null</code>（一个）。</li>
+<li><strong><code>LinkedHashSet</code></strong>：在 <code>HashSet</code> 基础上维护<strong>插入顺序</strong>的双向链表；适合需要稳定遍历顺序的去重场景。</li>
+<li><strong><code>TreeSet</code></strong>：基于 <code>TreeMap</code>（红黑树），按 <code>Comparable</code> &#x2F; <code>Comparator</code> <strong>全序</strong>；首元素插入时即确定比较规则，混用会 <code>ClassCastException</code>；<code>null</code> 依赖比较器是否支持。</li>
+</ul>
+<h2 id="Map-扩展"><a href="#Map-扩展" class="headerlink" title="Map 扩展"></a><code>Map</code> 扩展</h2><ul>
+<li><strong><code>LinkedHashMap</code></strong>：可配置<strong>插入序</strong>或<strong>访问序</strong>（<code>accessOrder=true</code> 时用于 LRU 缓存模式，常配合 <code>removeEldestEntry</code>）。</li>
+<li><strong><code>TreeMap</code></strong>：按键有序，<code>NavigableMap</code> 支持 <code>ceilingKey</code>、<code>floorKey</code> 等区间导航。</li>
+<li><strong><code>EnumMap</code></strong>：键为枚举类型，<strong>数组实现</strong>，紧凑高效，不允许 <code>null</code> 键。</li>
+<li><strong><code>WeakHashMap</code></strong>：键为弱引用，适合<strong>缓存&#x2F;元数据</strong>随 GC 回收，注意<strong>强引用键</strong>仍会一直存活。</li>
+<li><strong><code>IdentityHashMap</code></strong>：用 <code>==</code> 判等而非 <code>equals</code>，用于对象图序列化、调试等少数场景。</li>
+</ul>
+<h2 id="常见坑"><a href="#常见坑" class="headerlink" title="常见坑"></a>常见坑</h2><ul>
+<li><strong><code>Arrays.asList</code></strong>：返回<strong>固定大小</strong>的 <code>List</code> 视图，不能 <code>add</code>&#x2F;<code>remove</code>；若元素是基本类型数组，会把整个数组当成<strong>一个</strong>元素（常见 bug）。</li>
+<li><strong><code>subList</code></strong>：返回原 <code>List</code> 的视图，对 <code>subList</code> 的结构修改会写回原列表；<strong>原列表在子列表存活期间若被结构性修改</strong>，再操作子列表可能未定义行为或异常。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 安全复制为可变 ArrayList（中文注释：避免 asList 固定长度限制）</span><br>List&lt;String&gt; copy = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;(Arrays.asList(<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>));<br>copy.add(<span class="hljs-string">&quot;c&quot;</span>); <span class="hljs-comment">// 合法</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Comparable-与-Comparator"><a href="#Comparable-与-Comparator" class="headerlink" title="Comparable 与 Comparator"></a><code>Comparable</code> 与 <code>Comparator</code></h2><ul>
+<li>类内自然序用 <strong><code>Comparable&lt;T&gt;</code></strong>；多种排序规则或无法改源码时用 <strong><code>Comparator&lt;T&gt;</code></strong>。</li>
+<li><strong><code>TreeSet</code> &#x2F; <code>TreeMap</code> &#x2F; <code>PriorityQueue</code></strong> 的排序规则在运行期应一致，避免比较器与 <code>equals</code> 语义严重不一致导致集合契约被破坏（文档建议 <code>compare</code> 与 <code>equals</code> 一致）。</li>
+</ul>
+<h1 id="CopyOnWriteArrayList（专节小结）"><a href="#CopyOnWriteArrayList（专节小结）" class="headerlink" title="CopyOnWriteArrayList（专节小结）"></a>CopyOnWriteArrayList（专节小结）</h1><p><code>java.util.concurrent.CopyOnWriteArrayList</code> 是<strong>线程安全</strong>的 <code>List</code> 实现，适合<strong>读远多于写</strong>、且能接受<strong>弱一致性</strong>与<strong>写放大</strong>的场景。</p>
+<h2 id="核心机制：写时复制（Copy-On-Write）"><a href="#核心机制：写时复制（Copy-On-Write）" class="headerlink" title="核心机制：写时复制（Copy-On-Write）"></a>核心机制：写时复制（Copy-On-Write）</h2><ul>
+<li>底层维护 <code>volatile</code> 的 <strong><code>Object[]</code> 数组</strong>；<strong>读操作</strong>（<code>get</code>、<code>iterator</code> 等）通常<strong>不加锁</strong>，直接在当前数组上访问。</li>
+<li><strong>写操作</strong>（<code>add</code>、<code>set</code>、<code>remove</code> 等）时：复制一份<strong>新数组</strong>，在新数组上修改，再用<strong>原子方式</strong>把引用切到新数组（读线程仍可能短时间看到旧快照）。</li>
+<li>单次写的代价与<strong>当前长度</strong>近似线性相关：列表很大时，一次 <code>add</code> 也可能复制整表，<strong>写频繁会非常重</strong>。</li>
+</ul>
+<h2 id="迭代器与一致性"><a href="#迭代器与一致性" class="headerlink" title="迭代器与一致性"></a>迭代器与一致性</h2><ul>
+<li>迭代器基于<strong>创建时刻的快照</strong>（<code>COWIterator</code>），遍历的是<strong>当时的数组引用</strong>，<strong>不会</strong>因其他线程并发增删而抛 <code>ConcurrentModificationException</code>。</li>
+<li><strong>弱一致</strong>：迭代过程中若别的线程写入，本次迭代<strong>未必</strong>能看到新元素；也可能仍看到已逻辑删除的数据直到下一次写完成切换（语义以 JDK 文档为准：反映某时刻数组视图）。</li>
+<li><strong><code>Iterator.remove</code> &#x2F; <code>ListIterator</code> 的结构性修改</strong>不支持（会抛 <code>UnsupportedOperationException</code>）；需要删改请走集合自身 API。</li>
+</ul>
+<h2 id="与-Vector、Collections-synchronizedList-对比（取舍）"><a href="#与-Vector、Collections-synchronizedList-对比（取舍）" class="headerlink" title="与 Vector、Collections.synchronizedList 对比（取舍）"></a>与 <code>Vector</code>、<code>Collections.synchronizedList</code> 对比（取舍）</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th><code>CopyOnWriteArrayList</code></th>
+<th><code>Vector</code> &#x2F; <code>synchronizedList</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>读</td>
+<td>一般<strong>无锁读数组</strong>，并发读扩展性好</td>
+<td>读也常要锁，竞争激烈时易抖</td>
+</tr>
+<tr>
+<td>写</td>
+<td><strong>复制整表</strong>，写少合适</td>
+<td>锁粒度粗（<code>Vector</code> 方法级锁），写多也未必优</td>
+</tr>
+<tr>
+<td>迭代</td>
+<td>快照迭代，失败安全（不 CME）</td>
+<td>需外部同步或仍可能 CME（<code>ArrayList</code> 包装）</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>写时双份数组短暂存在，<strong>瞬时内存</strong>尖峰</td>
+<td>无整表复制，但锁竞争成本在别处</td>
+</tr>
+</tbody></table>
+<h2 id="适用场景（经验法则）"><a href="#适用场景（经验法则）" class="headerlink" title="适用场景（经验法则）"></a>适用场景（经验法则）</h2><ul>
+<li><strong>监听器 &#x2F; 观察者列表</strong>、<strong>配置或规则集</strong>读多、偶尔全量替换或少量追加。</li>
+<li><strong>遍历远多于修改</strong>且希望读线程<strong>不被写锁拖慢</strong>。</li>
+<li><strong>不适合</strong>：写密集、列表特别大、对「写完立刻被所有线程读到」有强实时要求的场景（应另选并发结构或加版本号&#x2F;发布语义）。</li>
+</ul>
+<h2 id="使用注意"><a href="#使用注意" class="headerlink" title="使用注意"></a>使用注意</h2><ul>
+<li>元素若会被多线程同时读到「中间态」，仍要保证<strong>对象自身的线程安全</strong>或<strong>不可变性</strong>；COW 只解决<strong>容器引用切换</strong>，不替你保证元素字段安全。</li>
+<li><code>equals</code> &#x2F; <code>hashCode</code> 若用于放入依赖语义的容器，元素规范仍应满足<strong>自反、一致</strong>等约定。</li>
+<li>若需<strong>频繁中间插入&#x2F;删除</strong>，时间复杂度与复制成本都会很差，应换结构（如分段、队列或别的并发集合）。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.util.concurrent.CopyOnWriteArrayList;<br><br><span class="hljs-comment">// 示例：读多写少的监听器列表（中文注释：注册与通知并发时仍安全遍历）</span><br>CopyOnWriteArrayList&lt;Runnable&gt; listeners = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CopyOnWriteArrayList</span>&lt;&gt;();<br><br>listeners.add(() -&gt; System.out.println(<span class="hljs-string">&quot;A&quot;</span>)); <span class="hljs-comment">// 写：可能触发数组复制</span><br>listeners.add(() -&gt; System.out.println(<span class="hljs-string">&quot;B&quot;</span>));<br><br><span class="hljs-keyword">for</span> (Runnable r : listeners) &#123; <span class="hljs-comment">// 迭代：基于快照，无 ConcurrentModificationException</span><br>    r.run();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h1 id="面试高频补充（集合）"><a href="#面试高频补充（集合）" class="headerlink" title="面试高频补充（集合）"></a>面试高频补充（集合）</h1><p>下列多为口述题&#x2F;追问点，与上文 <strong>HashMap、CHM、List、队列</strong> 互补；答题时抓住<strong>关键词</strong>即可。</p>
+<h2 id="equals-与-hashCode（必背契约）"><a href="#equals-与-hashCode（必背契约）" class="headerlink" title="equals 与 hashCode（必背契约）"></a><code>equals</code> 与 <code>hashCode</code>（必背契约）</h2><ul>
+<li><strong>契约</strong>：<code>equals</code> 相等的两个对象 <strong><code>hashCode</code> 必须相同</strong>；<code>hashCode</code> 相同 <strong><code>equals</code> 未必</strong>为真（哈希碰撞）。</li>
+<li><strong>HashMap &#x2F; HashSet</strong>：先算桶下标依赖 <code>hashCode</code>，再在桶内用 <code>equals</code> 判等；只重写 <code>equals</code> 不重写 <code>hashCode</code> 会导致<strong>存了却 get 不到</strong>、<strong>Set 去重失效</strong>。</li>
+<li><strong>可变对象作 key</strong>：若参与 <code>hash</code> 的字段被改，可能<strong>再也找不到</strong>原条目，一般<strong>不推荐</strong>把可变对象当 <code>HashMap</code> 的 key。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 中文注释：作为 HashMap 的 key 的类型，应同时、一致地重写 equals 与 hashCode</span><br><span class="hljs-comment">// 中文注释：可用 Objects.hash(参与 equals 比较的字段...) 生成稳定的 hashCode</span><br><span class="hljs-comment">// 中文注释：仅重写 equals 不重写 hashCode，会导致相同逻辑对象映射到不同桶，get 可能为 null</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="HashMap-寻址：容量为-2-的幂与扰动"><a href="#HashMap-寻址：容量为-2-的幂与扰动" class="headerlink" title="HashMap 寻址：容量为 2 的幂与扰动"></a>HashMap 寻址：容量为 2 的幂与扰动</h2><ul>
+<li>容量为 <strong>2 的幂</strong>时，下标可用 <strong><code>(n - 1) &amp; hash</code></strong> 代替取模，位运算快；扩容时元素<strong>要么在原下标，要么在原下标 + 旧容量</strong>（高低位拆分，利于迁移）。</li>
+<li><strong><code>hash</code> 扰动</strong>（高 16 位与低 16 位异或）：让低位更「散」，减少仅靠低位导致的热点桶（口述「减少碰撞」即可）。</li>
+</ul>
+<h2 id="JDK7-JDK8-扩容与并发（一句话版）"><a href="#JDK7-JDK8-扩容与并发（一句话版）" class="headerlink" title="JDK7 &#x2F; JDK8 扩容与并发（一句话版）"></a>JDK7 &#x2F; JDK8 扩容与并发（一句话版）</h2><ul>
+<li><strong>JDK7</strong>：<strong>头插法</strong>扩容迁移链表，多线程并发扩容可能形成<strong>环形链表</strong>，<code>get</code> 死循环（考点：为何别在多线程写 <strong>JDK7 HashMap</strong>）。</li>
+<li><strong>JDK8</strong>：链表改为<strong>尾插</strong>，并配合上述迁移逻辑；<strong>仍非线程安全</strong>，多线程 <code>put</code> 可能丢数据、<code>size</code> 不准，只是不再用「死链」那个经典模型来考。</li>
+</ul>
+<h2 id="null-与线程安全容器"><a href="#null-与线程安全容器" class="headerlink" title="null 与线程安全容器"></a><code>null</code> 与线程安全容器</h2><ul>
+<li><strong><code>HashMap</code></strong>：允许 <strong><code>null</code> key（至多一个）</strong> 与多个 <code>null</code> value。</li>
+<li><strong><code>Hashtable</code> &#x2F; <code>ConcurrentHashMap</code></strong>：<strong>不允许</strong> <code>null</code> key &#x2F; value（CHM 语义上避免二义性：无法区分「没放进去」与「放了 null」的并发可见问题，口述即可）。</li>
+</ul>
+<h2 id="fail-fast-再记一句"><a href="#fail-fast-再记一句" class="headerlink" title="fail-fast 再记一句"></a><code>fail-fast</code> 再记一句</h2><ul>
+<li>对 <strong><code>ArrayList</code></strong> 等：除 <strong><code>Iterator.remove()</code></strong>（以及 <code>ListIterator</code> 在支持结构上的合法操作）外，迭代中<strong>结构性修改</strong>集合本体 → <code>ConcurrentModificationException</code>。</li>
+</ul>
+<h2 id="PriorityQueue"><a href="#PriorityQueue" class="headerlink" title="PriorityQueue"></a><code>PriorityQueue</code></h2><ul>
+<li>底层<strong>二叉小顶堆</strong>（默认）；<code>peek</code> 看堆顶不删，<code>poll</code> 删堆顶。</li>
+<li><strong><code>add</code> 逐个插入</strong>与 <strong><code>heapify</code> 批量建堆</strong>：批量从无序数组建堆可 <strong>O(n)</strong>，常考「不是每次插入都算 O(log n) 叠加成 O(n log n) 建堆」的辨析。</li>
+</ul>
+<h2 id="并发有序：ConcurrentSkipListMap-ConcurrentSkipListSet"><a href="#并发有序：ConcurrentSkipListMap-ConcurrentSkipListSet" class="headerlink" title="并发有序：ConcurrentSkipListMap &#x2F; ConcurrentSkipListSet"></a>并发有序：<code>ConcurrentSkipListMap</code> &#x2F; <code>ConcurrentSkipListSet</code></h2><ul>
+<li><strong>跳表</strong>实现，<strong>线程安全</strong>且<strong>按键有序</strong>；<code>Comparator</code> 或元素 <code>Comparable</code> 要自洽，<strong>不允许 <code>null</code> key</strong>（<code>null</code> 无法参与比较）。</li>
+<li>与 <strong><code>ConcurrentHashMap</code></strong> 对比：CHM <strong>无序</strong>、一般读写更均衡；SkipList 有序、写略重，适合<strong>并发下需排序&#x2F;范围查询</strong>。</li>
+</ul>
+<h2 id="ConcurrentLinkedQueue"><a href="#ConcurrentLinkedQueue" class="headerlink" title="ConcurrentLinkedQueue"></a><code>ConcurrentLinkedQueue</code></h2><ul>
+<li><strong>无锁链表</strong>（CAS），高并发入队出队常用；<strong><code>size()</code> 需遍历</strong>，<strong>O(n)</strong> 且仅近似，面试常问「为何生产环境别频繁调 <code>size</code> 做判断」。</li>
+</ul>
+<h2 id="工程常数"><a href="#工程常数" class="headerlink" title="工程常数"></a>工程常数</h2><ul>
+<li><strong><code>HashMap</code> 默认负载因子 0.75</strong>：时间&#x2F;空间折中（泊松分布推导是加分项，答「经验 + 统计」即可）。</li>
+<li><strong><code>ArrayList</code> 默认容量 10</strong>：指<strong>第一次扩容触发后</strong>的常见实现语义，口述「懒初始化」有的版本细节以 JDK 为准。</li>
+</ul>
 
                 
               </div>
@@ -693,9 +851,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/" title="JVM">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">设计模式</span>
+                        <span class="hidden-mobile">JVM</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -703,8 +861,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/04/20/hexo/" title="如何使用HEXO快速搭建个人博客">
-                        <span class="hidden-mobile">如何使用HEXO快速搭建个人博客</span>
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
+                        <span class="hidden-mobile">设计模式</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

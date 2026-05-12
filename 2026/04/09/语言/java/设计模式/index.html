@@ -9,7 +9,7 @@
   <meta charset="UTF-8">
 
   <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
-  <link rel="icon" href="/img/cat.ico">
+  <link rel="icon" href="/img/fluid.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -19,19 +19,22 @@
   <meta name="author" content="Yangyang Kong">
   <meta name="keywords" content="">
   
-    <meta name="description" content="设计模式核心问题高频面试点示例代码易错点总结">
+    <meta name="description" content="1.工厂设计模式(设计模式-工厂模式(简单工厂、工厂方法、抽象工厂)简单工厂模式 简单工厂模式是指由一个工厂对象决定常见出哪一种产品类的实 - 掘金)2.单例设计模式3.代理设计模式（AOP）AOP(Aspect-Oriented Programming，面向切面编程) 能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="设计模式">
 <meta property="og:url" content="https://kyy-logs.github.io/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
 <meta property="og:site_name" content="多云的小站">
-<meta property="og:description" content="设计模式核心问题高频面试点示例代码易错点总结">
+<meta property="og:description" content="1.工厂设计模式(设计模式-工厂模式(简单工厂、工厂方法、抽象工厂)简单工厂模式 简单工厂模式是指由一个工厂对象决定常见出哪一种产品类的实 - 掘金)2.单例设计模式3.代理设计模式（AOP）AOP(Aspect-Oriented Programming，面向切面编程) 能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250610114024125.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250610142322610.png">
 <meta property="article:published_time" content="2026-04-09T14:28:06.000Z">
-<meta property="article:modified_time" content="2026-04-10T05:33:17.874Z">
+<meta property="article:modified_time" content="2026-05-12T15:25:34.344Z">
 <meta property="article:author" content="Yangyang Kong">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kyy-logs.github.io/img/blog/image-20250610114024125.png">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
@@ -243,6 +246,18 @@
           
           
             <li class="nav-item">
+              <a class="nav-link" href="/ai/" target="_self">
+                
+                <span>Ai</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
               <a class="nav-link" href="/algorithm/" target="_self">
                 <i class="iconfont icon-launch-fill"></i>
                 <span>算法</span>
@@ -374,7 +389,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          22 字
+          1.3k 字
         
       </span>
     
@@ -385,7 +400,7 @@
         
         
         
-          1 分钟
+          11 分钟
         
       </span>
     
@@ -440,7 +455,39 @@
             
               <div class="markdown-body">
                 
-                <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><h2 id="核心问题"><a href="#核心问题" class="headerlink" title="核心问题"></a>核心问题</h2><h2 id="高频面试点"><a href="#高频面试点" class="headerlink" title="高频面试点"></a>高频面试点</h2><h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><h2 id="易错点"><a href="#易错点" class="headerlink" title="易错点"></a>易错点</h2><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2>
+                <h1 id="1-工厂设计模式-设计模式-工厂模式-简单工厂、工厂方法、抽象工厂-简单工厂模式-简单工厂模式是指由一个工厂对象决定常见出哪一种产品类的实-掘金"><a href="#1-工厂设计模式-设计模式-工厂模式-简单工厂、工厂方法、抽象工厂-简单工厂模式-简单工厂模式是指由一个工厂对象决定常见出哪一种产品类的实-掘金" class="headerlink" title="1.工厂设计模式(设计模式-工厂模式(简单工厂、工厂方法、抽象工厂)简单工厂模式 简单工厂模式是指由一个工厂对象决定常见出哪一种产品类的实 - 掘金)"></a><strong>1.工厂设计模式</strong>(<a target="_blank" rel="noopener" href="https://juejin.cn/post/7163177142577004558?searchId=202506101144521725079DBCAA6D774B66">设计模式-工厂模式(简单工厂、工厂方法、抽象工厂)简单工厂模式 简单工厂模式是指由一个工厂对象决定常见出哪一种产品类的实 - 掘金</a>)</h1><h1 id="2-单例设计模式"><a href="#2-单例设计模式" class="headerlink" title="2.单例设计模式"></a>2.单例设计模式</h1><h1 id="3-代理设计模式（AOP）"><a href="#3-代理设计模式（AOP）" class="headerlink" title="3.代理设计模式（AOP）"></a><strong>3.代理设计模式（AOP）</strong></h1><p><strong>AOP(Aspect-Oriented Programming，面向切面编程)</strong> 能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。</p>
+<h1 id="4-观察者模式-华为面试官：手写一个观察者模式面试官：观察者模式在面向对象的语言中很常见。前端手写一个观察者模式。文章先以易于理解版介绍-掘金"><a href="#4-观察者模式-华为面试官：手写一个观察者模式面试官：观察者模式在面向对象的语言中很常见。前端手写一个观察者模式。文章先以易于理解版介绍-掘金" class="headerlink" title="4.观察者模式(华为面试官：手写一个观察者模式面试官：观察者模式在面向对象的语言中很常见。前端手写一个观察者模式。文章先以易于理解版介绍 - 掘金)"></a><strong>4.观察者模式</strong>(<a target="_blank" rel="noopener" href="https://juejin.cn/post/7424176544668794920?searchId=20250610112939555D6A6086575BC211B1">华为面试官：手写一个观察者模式面试官：观察者模式在面向对象的语言中很常见。前端手写一个观察者模式。文章先以易于理解版介绍 - 掘金</a>)</h1><p><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F&spm=1001.2101.3001.7020">观察者模式</a>（又被称为发布-订阅（Publish&#x2F;Subscribe）模式，属于行为型模式的一种，它定义了一种一对多的依赖关系，让多个观察者对象同时监听某一个主题对象。这个主题对象在状态变化时，会通知所有的观察者对象，使他们能够自动更新自己。</p>
+<p><strong>观察者模式结构图</strong></p>
+<p><img src="/../../../img/blog/image-20250610114024125.png" srcset="/img/loading.gif" lazyload alt="image-20250610114024125"></p>
+<p>在观察者模式中有如下角色：</p>
+<ul>
+<li>Subject：抽象主题（抽象被观察者），抽象主题角色把所有观察者对象保存在一个集合里，每个主题都可以有任意数量的观察者，抽象主题提供一个接口，可以增加和删除观察者对象。</li>
+<li>ConcreteSubject：具体主题（具体被观察者），该角色将有关状态存入具体观察者对象，在具体主题的内部状态发生改变时，给所有注册过的观察者发送通知。</li>
+<li>Observer：抽象观察者，是观察者者的抽象类，它定义了一个更新接口，使得在得到主题更改通知时更新自己。</li>
+<li>ConcrereObserver：具体观察者，实现抽象观察者定义的更新接口，以便在得到主题更改通知时更新自身的状态。</li>
+</ul>
+<h1 id="5-装饰者模式-JS设计模式之装饰者模式：优雅的给对象增添“魔法”装饰者模式（Decorator-Pattern）是一种结构型设计模式，-掘金"><a href="#5-装饰者模式-JS设计模式之装饰者模式：优雅的给对象增添“魔法”装饰者模式（Decorator-Pattern）是一种结构型设计模式，-掘金" class="headerlink" title="5.装饰者模式(JS设计模式之装饰者模式：优雅的给对象增添“魔法”装饰者模式（Decorator Pattern）是一种结构型设计模式， - 掘金)"></a><strong>5.装饰者模式(<a target="_blank" rel="noopener" href="https://juejin.cn/post/7283776161527070757?searchId=20250610120058C5A17D9E474D56975872">JS设计模式之装饰者模式：优雅的给对象增添“魔法”装饰者模式（Decorator Pattern）是一种结构型设计模式， - 掘金</a>)</strong></h1><p>装饰者模式可以动态地给对象添加一些额外的属性或行为。相比于使用继承，装饰者模式更加灵活。简单点儿说就是当我们需要修改原有的功能，但我们又不愿直接去修改原有的代码时，设计一个 Decorator 套在原有代码外面。其实在 JDK 中就有很多地方用到了装饰者模式，比如 <code>InputStream</code>家族，<code>InputStream</code> 类下有 <code>FileInputStream</code> (读取文件)、<code>BufferedInputStream</code> (增加缓存,使读取文件速度大大提升)等子类都在不修改<code>InputStream</code> 代码的情况下扩展了它的功能。</p>
+<p><strong>继承是在编译时（compile-time）静态地给一个类增加功能，而装饰者模式是在运行时（run-time）动态地给一个对象增加功能。</strong></p>
+<p>装饰者模式可以减少类的创建：</p>
+<p><strong>5.1通过继承</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;                           <span class="hljs-comment">// 纯咖啡</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithSugar</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;   <span class="hljs-comment">// 咖啡+糖</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithMilk</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;    <span class="hljs-comment">// 咖啡+牛奶</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithIce</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;     <span class="hljs-comment">// 咖啡+冰块</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithSugarAndMilk</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;  <span class="hljs-comment">// 咖啡+糖+牛奶</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithSugarAndIce</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;   <span class="hljs-comment">// 咖啡+糖+冰块</span><br><span class="hljs-comment">// ... 其他组合（共需要 7 个子类）</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>问题</strong>：<br>		3 种功能需要 7 个子类；如果有 5 种功能，则需要 <code>2^5 - 1 = 31</code> 个子类！这就是“类爆炸”。</p>
+<p><strong>5.2通过装饰者模式实现</strong></p>
+<p>只需为每个功能定义一个装饰类，通过组合实现任意功能嵌套：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 核心组件</span><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">BasicCoffee</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Coffee</span> &#123;&#125;<br><br><span class="hljs-comment">// 装饰基类</span><br><span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeDecorator</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Coffee</span> &#123;<br>    <span class="hljs-keyword">protected</span> Coffee decoratedCoffee;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">CoffeeDecorator</span><span class="hljs-params">(Coffee coffee)</span> &#123;<br>        <span class="hljs-built_in">this</span>.decoratedCoffee = coffee;<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">// 具体装饰类（每个功能一个类）</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">SugarDecorator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">CoffeeDecorator</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SugarDecorator</span><span class="hljs-params">(Coffee coffee)</span> &#123; <span class="hljs-built_in">super</span>(coffee); &#125;<br>    <span class="hljs-comment">// 添加糖的逻辑</span><br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MilkDecorator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">CoffeeDecorator</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">MilkDecorator</span><span class="hljs-params">(Coffee coffee)</span> &#123; <span class="hljs-built_in">super</span>(coffee); &#125;<br>    <span class="hljs-comment">// 添加牛奶的逻辑</span><br>&#125;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">IceDecorator</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">CoffeeDecorator</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">IceDecorator</span><span class="hljs-params">(Coffee coffee)</span> &#123; <span class="hljs-built_in">super</span>(coffee); &#125;<br>    <span class="hljs-comment">// 添加冰块的逻辑</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><strong>使用时动态组合</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 任意组合功能，无需预定义子类：</span><br><span class="hljs-type">Coffee</span> <span class="hljs-variable">order1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SugarDecorator</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BasicCoffee</span>());               <span class="hljs-comment">// 咖啡+糖</span><br><span class="hljs-type">Coffee</span> <span class="hljs-variable">order2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MilkDecorator</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">SugarDecorator</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BasicCoffee</span>())); <span class="hljs-comment">// 咖啡+糖+牛奶</span><br><span class="hljs-type">Coffee</span> <span class="hljs-variable">order3</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IceDecorator</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">MilkDecorator</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BasicCoffee</span>()));   <span class="hljs-comment">// 咖啡+牛奶+冰块</span><br><span class="hljs-comment">// ... 其他组合直接嵌套即可</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>优势</strong>：</p>
+<ul>
+<li>3 种功能只需 3 个装饰类（而非 7 个子类）。</li>
+<li>5 种功能只需 5 个装饰类（而非 31 个子类）。</li>
+<li><strong>新增功能时</strong>（如加蜂蜜），只需加一个 <code>HoneyDecorator</code>，而不是为所有组合创建子类。</li>
+</ul>
+<p><img src="/../../../img/blog/image-20250610142322610.png" srcset="/img/loading.gif" lazyload alt="image-20250610142322610"></p>
+<h1 id="6-策略模式（一文搞懂策略模式-优化策略模式完全消除if-else-CSDN博客）"><a href="#6-策略模式（一文搞懂策略模式-优化策略模式完全消除if-else-CSDN博客）" class="headerlink" title="6.策略模式（一文搞懂策略模式(优化策略模式完全消除if else)-CSDN博客）"></a><strong>6.策略模式（<a target="_blank" rel="noopener" href="https://blog.csdn.net/bookssea/article/details/117043820">一文搞懂策略模式(优化策略模式完全消除if else)-CSDN博客</a>）</strong></h1><h1 id="7-责任链模式（Java-实现责任链模式-策略模式：优雅处理多级请求的方式一、什么是责任链模式？-责任链模式（Chain-of-Re-掘金）"><a href="#7-责任链模式（Java-实现责任链模式-策略模式：优雅处理多级请求的方式一、什么是责任链模式？-责任链模式（Chain-of-Re-掘金）" class="headerlink" title="7.责任链模式（Java 实现责任链模式 + 策略模式：优雅处理多级请求的方式一、什么是责任链模式？ 责任链模式（Chain of Re - 掘金）"></a><strong>7.责任链模式（<a target="_blank" rel="noopener" href="https://juejin.cn/post/7457366224823124003?searchId=20250914193645C40A9A4AE1DD60778251">Java 实现责任链模式 + 策略模式：优雅处理多级请求的方式一、什么是责任链模式？ 责任链模式（Chain of Re - 掘金</a>）</strong></h1><h1 id="8-代理模式和装饰者模式的区别（面试官问：代理模式和装饰者模式有啥区别-装饰者模式和代理模式的区别-CSDN博客"><a href="#8-代理模式和装饰者模式的区别（面试官问：代理模式和装饰者模式有啥区别-装饰者模式和代理模式的区别-CSDN博客" class="headerlink" title="8.代理模式和装饰者模式的区别（面试官问：代理模式和装饰者模式有啥区别_装饰者模式和代理模式的区别-CSDN博客)"></a><strong>8.代理模式和装饰者模式的区别</strong>（<a target="_blank" rel="noopener" href="https://blog.csdn.net/SPACESTUDIO/article/details/107434876">面试官问：代理模式和装饰者模式有啥区别_装饰者模式和代理模式的区别-CSDN博客</a>)</h1><h2 id="高频面试点"><a href="#高频面试点" class="headerlink" title="高频面试点"></a>高频面试点</h2><h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><h2 id="易错点"><a href="#易错点" class="headerlink" title="易错点"></a>易错点</h2><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2>
                 
               </div>
             
@@ -539,9 +586,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="Java基础语法">
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" title="集合框架">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Java基础语法</span>
+                        <span class="hidden-mobile">集合框架</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -549,8 +596,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" title="集合框架">
-                        <span class="hidden-mobile">集合框架</span>
+                      <a href="/2025/04/20/hexo/" title="如何使用HEXO快速搭建个人博客">
+                        <span class="hidden-mobile">如何使用HEXO快速搭建个人博客</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

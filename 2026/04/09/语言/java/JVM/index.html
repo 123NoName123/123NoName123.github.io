@@ -9,7 +9,7 @@
   <meta charset="UTF-8">
 
   <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
-  <link rel="icon" href="/img/cat.ico">
+  <link rel="icon" href="/img/fluid.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260121115234846-1775807911016.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260121115257476-1775807911016.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260121115305960-1775807911016.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/b3ac1bea49e1b576c00dea7e75eb271b.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/b3ac1bea49e1b576c00dea7e75eb271b.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260410163236183.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260410163245029.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110019006-1775807911016.png">
@@ -42,7 +42,7 @@
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260107110915889-1775807911016.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260109231003665-1775807911016.png">
 <meta property="article:published_time" content="2026-04-09T14:28:06.000Z">
-<meta property="article:modified_time" content="2026-04-11T02:05:19.999Z">
+<meta property="article:modified_time" content="2026-05-12T15:14:55.775Z">
 <meta property="article:author" content="Yangyang Kong">
 <meta property="article:tag" content="JVM">
 <meta property="article:tag" content="Java">
@@ -259,6 +259,18 @@
           
           
             <li class="nav-item">
+              <a class="nav-link" href="/ai/" target="_self">
+                
+                <span>Ai</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
               <a class="nav-link" href="/algorithm/" target="_self">
                 <i class="iconfont icon-launch-fill"></i>
                 <span>算法</span>
@@ -456,7 +468,7 @@
             
               <div class="markdown-body">
                 
-                <h1 id="JVM内存区域（Java内存区域详解（重点）-JavaGuide）"><a href="#JVM内存区域（Java内存区域详解（重点）-JavaGuide）" class="headerlink" title="JVM内存区域（Java内存区域详解（重点） | JavaGuide）"></a>JVM内存区域（<a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/memory-area.html">Java内存区域详解（重点） | JavaGuide</a>）</h1><p><img src="/../../../img/blog/image-20260120235602280-1775807911015.png" srcset="/img/loading.gif" lazyload alt="image-20260120235602280"></p>
+                <h1 id="JVM内存区域（Java内存区域详解（重点）-JavaGuide）"><a href="#JVM内存区域（Java内存区域详解（重点）-JavaGuide）" class="headerlink" title="JVM内存区域（Java内存区域详解（重点） | JavaGuide）"></a>JVM内存区域（<a target="_blank" rel="noopener" href="https://javaguide.cn/java/jvm/memory-area.html">Java内存区域详解（重点） | JavaGuide</a>）</h1><p><img src="/../../../img/blog/image-20260120235602280-1775807911015.png" srcset="/img/loading.gif" lazyload alt="image-20260120235602280-1775807911015"></p>
 <p><strong>D. 本地方法栈 (Native Method Stack) —— 线程私有</strong></p>
 <ul>
 <li><strong>存什么</strong>：为 native 方法服务（如 System.currentTimeMillis() 这种 C++ 写的底层方法）。</li>
@@ -531,9 +543,9 @@
 <li>方法区中常量引用的对象</li>
 <li>所有被同步锁持有的对象</li>
 </ul>
-<p><img src="/../../../img/blog/image-20260121115234846-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115234846"></p>
-<p><img src="/../../../img/blog/image-20260121115257476-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115257476"></p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><img src="/../../../img/blog/image-20260121115305960-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115305960"></h2><p><strong>第一阶段：运行时赋值（埋雷）</strong></p>
+<p><img src="/../../../img/blog/image-20260121115234846-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115234846-1775807911016"></p>
+<p><img src="/../../../img/blog/image-20260121115257476-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115257476-1775807911016"></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><img src="/../../../img/blog/image-20260121115305960-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260121115305960-1775807911016"></h2><p><strong>第一阶段：运行时赋值（埋雷）</strong></p>
 <p><strong>场景</strong>：代码正在运行，老年代对象 OldObj（位于 Region A）的字段引用了新生代对象 YoungObj（位于 Region B）。<br>代码：OldObj.field &#x3D; YoungObj;</p>
 <ol>
 <li><strong>拦截（Write Barrier）</strong>：<br>JVM 不会直接干巴巴地执行赋值。在赋值操作完成后，<strong>写屏障（Post-Write Barrier）</strong> 像一个安检员一样拦截了这个操作。</li>
@@ -565,8 +577,7 @@
 <li><strong>精准扫描</strong>：<br>GC 线程直接跳到 Region A 的第 X 卡页（只有 512 字节），扫描这一小块内存。<br>它立刻发现了 OldObj 引用着 YoungObj。</li>
 <li><strong>标记存活</strong>：<br>YoungObj 被标记为存活，复制到 Survivor 区，逃过一劫。</li>
 </ol>
-<h1 id="GC年轻代回收的过程-GC的时机-什么时候会触发full-GC，触发了该怎么排查处理-JVM-GC过程总结-minor-GC-和-Full-GC-CSDN博客"><a href="#GC年轻代回收的过程-GC的时机-什么时候会触发full-GC，触发了该怎么排查处理-JVM-GC过程总结-minor-GC-和-Full-GC-CSDN博客" class="headerlink" title="GC年轻代回收的过程,GC的时机,什么时候会触发full GC，触发了该怎么排查处理(JVM: GC过程总结(minor GC 和 Full GC)-CSDN博客)"></a>GC年轻代回收的过程,GC的时机,什么时候会触发full GC，触发了该怎么排查处理(<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42615068/article/details/102813947">JVM: GC过程总结(minor GC 和 Full GC)-CSDN博客</a>)</h1><img src="https://i-blog.csdnimg.cn/blog_migrate/b3ac1bea49e1b576c00dea7e75eb271b.png" srcset="/img/loading.gif" lazyload alt="img" style="zoom: 80%;" /> 
-
+<h1 id="GC年轻代回收的过程-GC的时机-什么时候会触发full-GC，触发了该怎么排查处理-JVM-GC过程总结-minor-GC-和-Full-GC-CSDN博客"><a href="#GC年轻代回收的过程-GC的时机-什么时候会触发full-GC，触发了该怎么排查处理-JVM-GC过程总结-minor-GC-和-Full-GC-CSDN博客" class="headerlink" title="GC年轻代回收的过程,GC的时机,什么时候会触发full GC，触发了该怎么排查处理(JVM: GC过程总结(minor GC 和 Full GC)-CSDN博客)"></a>GC年轻代回收的过程,GC的时机,什么时候会触发full GC，触发了该怎么排查处理(<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42615068/article/details/102813947">JVM: GC过程总结(minor GC 和 Full GC)-CSDN博客</a>)</h1><p><img src="/../../../img/blog/b3ac1bea49e1b576c00dea7e75eb271b.png" srcset="/img/loading.gif" lazyload alt="b3ac1bea49e1b576c00dea7e75eb271b"></p>
 <ul>
 <li>Eden：这是对象最初诞生的区域，并且对大多数对象来说，这里是它们唯一存在过的区域。</li>
 <li>Survivor区： 存活区，每次Minor GC 完后，将仍然被引用的对象存放的区域，有两个同样大小的区域。</li>
@@ -918,14 +929,14 @@
 <li><strong>锁规则</strong>：一个锁的<strong>解锁</strong> (unlock) 操作，happens-before 后面对这个锁的<strong>加锁</strong> (lock)。</li>
 <li><strong>传递性</strong>：A happens-before B, B happens-before C, 那么 A happens-before C。</li>
 </ol>
-<h1 id="new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）"><a href="#new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）" class="headerlink" title="new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）"></a>new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）</h1><h1 id="TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread-Local-Allocation-Buffer）-CSDN博客）"><a href="#TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread-Local-Allocation-Buffer）-CSDN博客）" class="headerlink" title="TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread Local Allocation Buffer）-CSDN博客）"></a>TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qghurt/article/details/107289843">TLAB（Thread Local Allocation Buffer）-CSDN博客</a>）</h1><h1 id="大对象具体是如何进入老年代的"><a href="#大对象具体是如何进入老年代的" class="headerlink" title="大对象具体是如何进入老年代的"></a>大对象具体是如何进入老年代的</h1><p><img src="/../../../img/blog/image-20260107110019006-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110019006"></p>
-<p><img src="/../../../img/blog/image-20260107110132399-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110132399"></p>
-<p><img src="/../../../img/blog/image-20260107110159056-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110159056"></p>
-<h1 id="内存分配担保机制"><a href="#内存分配担保机制" class="headerlink" title="内存分配担保机制"></a><strong>内存分配担保机制</strong></h1><p><img src="/../../../img/blog/image-20260107111042385-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107111042385"></p>
-<p><img src="/../../../img/blog/image-20260107111316969-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107111316969"></p>
-<p><img src="/../../../img/blog/image-20260107110852695-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110852695"></p>
-<p><img src="/../../../img/blog/image-20260107110915889-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110915889"></p>
-<h1 id="内存泄露排查的方法"><a href="#内存泄露排查的方法" class="headerlink" title="内存泄露排查的方法"></a>内存泄露排查的方法</h1><p><img src="/../../../img/blog/image-20260109231003665-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260109231003665"></p>
+<h1 id="new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）"><a href="#new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）" class="headerlink" title="new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）"></a>new一个对象的过程中，分配内存有几种方式？分配内存在并发环境下如果存在锁的竞争，JVM如何解决这个问题？（深入理解Java虚拟机P81）</h1><h1 id="TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread-Local-Allocation-Buffer）-CSDN博客）"><a href="#TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread-Local-Allocation-Buffer）-CSDN博客）" class="headerlink" title="TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（TLAB（Thread Local Allocation Buffer）-CSDN博客）"></a>TLAB的全称是啥？你刚刚好几次提到了TLAB的伊甸区，伊甸区在哪里？TLAB是线程独享的吗？TLAB会给每个线程划分一块小小的区域，比如100KB，但是随着线程的运行比如调用栈特别深，new了很多对象，TLAB内存不够了，这时候需要怎么办？（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qghurt/article/details/107289843">TLAB（Thread Local Allocation Buffer）-CSDN博客</a>）</h1><h1 id="大对象具体是如何进入老年代的"><a href="#大对象具体是如何进入老年代的" class="headerlink" title="大对象具体是如何进入老年代的"></a>大对象具体是如何进入老年代的</h1><p><img src="/../../../img/blog/image-20260107110019006-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110019006-1775807911016"></p>
+<p><img src="/../../../img/blog/image-20260107110132399-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110132399-1775807911016"></p>
+<p><img src="/../../../img/blog/image-20260107110159056-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110159056-1775807911016"></p>
+<h1 id="内存分配担保机制"><a href="#内存分配担保机制" class="headerlink" title="内存分配担保机制"></a><strong>内存分配担保机制</strong></h1><p><img src="/../../../img/blog/image-20260107111042385-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107111042385-1775807911016"></p>
+<p><img src="/../../../img/blog/image-20260107111316969-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107111316969-1775807911016"></p>
+<p><img src="/../../../img/blog/image-20260107110852695-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110852695-1775807911016"></p>
+<p><img src="/../../../img/blog/image-20260107110915889-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260107110915889-1775807911016"></p>
+<h1 id="内存泄露排查的方法"><a href="#内存泄露排查的方法" class="headerlink" title="内存泄露排查的方法"></a>内存泄露排查的方法</h1><p><img src="/../../../img/blog/image-20260109231003665-1775807911016.png" srcset="/img/loading.gif" lazyload alt="image-20260109231003665-1775807911016"></p>
 <h1 id="jvm常用参数有哪些"><a href="#jvm常用参数有哪些" class="headerlink" title="jvm常用参数有哪些"></a><mark>jvm常用参数有哪些</mark></h1><p><strong>一、 堆内存设置（最常用）</strong></p>
 <p>这部分决定了应用能吞吐多少数据，以及 GC 的频率。</p>
 <ol>
@@ -1078,9 +1089,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/" title="IO与网络">
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="Java基础语法">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">IO与网络</span>
+                        <span class="hidden-mobile">Java基础语法</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -1088,8 +1099,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" title="Java基础语法">
-                        <span class="hidden-mobile">Java基础语法</span>
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" title="集合框架">
+                        <span class="hidden-mobile">集合框架</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

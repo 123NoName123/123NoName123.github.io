@@ -9,7 +9,7 @@
   <meta charset="UTF-8">
 
   <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
-  <link rel="icon" href="/img/cat.ico">
+  <link rel="icon" href="/img/fluid.png">
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260307105614220.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250916225616548.png">
 <meta property="article:published_time" content="2026-04-09T14:28:06.000Z">
-<meta property="article:modified_time" content="2026-04-11T02:05:19.918Z">
+<meta property="article:modified_time" content="2026-04-12T07:32:00.778Z">
 <meta property="article:author" content="Yangyang Kong">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="基础">
@@ -257,6 +257,18 @@
           
           
             <li class="nav-item">
+              <a class="nav-link" href="/ai/" target="_self">
+                
+                <span>Ai</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
               <a class="nav-link" href="/algorithm/" target="_self">
                 <i class="iconfont icon-launch-fill"></i>
                 <span>算法</span>
@@ -388,7 +400,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          15k 字
+          17k 字
         
       </span>
     
@@ -399,7 +411,7 @@
         
         
         
-          129 分钟
+          145 分钟
         
       </span>
     
@@ -786,7 +798,7 @@
 </ul>
 <h1 id="为什么要设置wait和notify在父类中"><a href="#为什么要设置wait和notify在父类中" class="headerlink" title="为什么要设置wait和notify在父类中"></a>为什么要设置wait和notify在父类中</h1><p>将 <code>wait()</code> 和 <code>notify()</code> 放在父类中，可以实现更高效的线程同步和共享资源的管理，避免代码重复，提高可维护性。父类可以集中管理同步逻辑，而子类通过继承父类来获得这些功能，专注于自己的业务逻辑。</p>
 <h1 id="重载和重写区别"><a href="#重载和重写区别" class="headerlink" title="重载和重写区别"></a>重载和重写区别</h1><p>答：方法的重载和重写都是实现多态的方式，区别在于前者实现的是编译时的多态性，而后者实现的是运行时的多态性。重载发生在一个类中，同名的方法如果有不同的参数列表（参数类型不同、参数个数不同或者二者都不同）则视为重载；重写发生在子类与父类之间，重写要求子类被重写方法与父类被重写方法有相同的参数列表，有兼容的返回类型，比父类被重写方法更好访问，不能比父类被重写方法声明更多的异常（里氏代换原则）。重载对返回类型没有特殊的要求，不能根据返回类型进行区分。</p>
-<h1 id="接口是什么，使用的场景，和抽象类区别"><a href="#接口是什么，使用的场景，和抽象类区别" class="headerlink" title="接口是什么，使用的场景，和抽象类区别"></a>接口是什么，使用的场景，和抽象类区别</h1><h1 id="反射的概念及应用，反射在JVM层面的底层实现？使用场景？"><a href="#反射的概念及应用，反射在JVM层面的底层实现？使用场景？" class="headerlink" title="反射的概念及应用，反射在JVM层面的底层实现？使用场景？"></a>反射的概念及应用，反射在JVM层面的底层实现？使用场景？</h1><p><strong>1.反射的概念</strong></p>
+<h1 id="接口是什么，使用的场景，和抽象类区别"><a href="#接口是什么，使用的场景，和抽象类区别" class="headerlink" title="接口是什么，使用的场景，和抽象类区别"></a>接口是什么，使用的场景，和抽象类区别</h1><h1 id="反射的概念及应用，反射在JVM层面的底层实现？使用场景？"><a href="#反射的概念及应用，反射在JVM层面的底层实现？使用场景？" class="headerlink" title="反射的概念及应用，反射在JVM层面的底层实现？使用场景？"></a>反射的概念及应用，<mark>反射在JVM层面的底层实现？</mark>使用场景？</h1><p><strong>1.反射的概念</strong></p>
 <p>反射（Reflection）是 Java 的一种特性，它可以让程序在运行时获取自身的信息，并且动态地操作类或对象的属性、方法和构造器等。通过反射功能，可以通过反射，程序可以在不知道类的具体实现的情况下，操作类的对象和成员。</p>
 <p><strong>定义</strong>：反射是指在<strong>运行状态（Runtime）**中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性。<br>这种**动态获取信息**以及</strong>动态调用对象方法**的功能称为 Java 语言的反射机制。</p>
 <ul>
@@ -826,35 +838,44 @@
 <p>6.调用类的方法</p>
 <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs pgsql"><span class="hljs-keyword">Class</span>&lt;?&gt; clazz = MyClass.<span class="hljs-keyword">class</span>;<br>MyClass myClass = <span class="hljs-built_in">new</span> MyClass();<br><span class="hljs-keyword">Method</span> <span class="hljs-keyword">method</span> = clazz.getDeclaredMethod(&quot;methodName&quot;, String.<span class="hljs-keyword">class</span>);<br><span class="hljs-keyword">method</span>.setAccessible(<span class="hljs-keyword">true</span>); //如果方法为private，需要设置Accessible<br><span class="hljs-keyword">Object</span> result = <span class="hljs-keyword">method</span>.invoke(myClass, &quot;参数&quot;); //传递给方法的参数<br><br></code></pre></td></tr></table></figure>
 
-<p><strong>底层实现可以分为两个阶段：</strong></p>
-<p><strong>阶段一：初次调用（慢）</strong></p>
-<p>当你第一次通过反射调用一个方法时（如 Method.invoke()），JVM 内部会经过一个相对复杂的流程：</p>
-<ol>
-<li><strong>权限检查 (Security Check)</strong>：检查调用者是否有权限访问该方法（比如 private 方法）。</li>
-<li><strong>创建 MethodAccessor</strong>：<ul>
-<li>JVM 不会直接去解析 Method 对象，而是会<mark>为每个 Method 对象在<strong>第一次调用时</strong>动态生成一个**“委派实现</mark> (Delegating MethodAccessor)”**。<br>.</li>
-</ul>
-</li>
-<li><strong>动态生成字节码 (关键)</strong>：<ul>
-<li>这个委派实现会进一步判断，决定是生成一个 <mark><strong>“本地实现 (Native MethodAccessor)”</strong> 还是 <strong>“Java 实现</mark> (Java MethodAccessor)”</strong>。</li>
-<li><strong>本地实现 (Native)</strong>：通过 JNI (Java Native Interface) 调用 C++ 代码来执行。<mark>启动快，但调用开销大。</mark></li>
-<li><strong>Java 实现 (Java)</strong>：<mark><strong>动态生成字节码</strong></mark>。JVM 会在运行时为你调用的那个方法，即时编译生成一个专门的 <mark>Java 类（</mark>比如叫 GeneratedMethodAccessor1），这个类里面是一<mark>段<strong>硬编码的、直接调用目标方法的字节码</strong></mark>。<ul>
-<li><em>比如，你要反射调用 user.getName()，它就生成一个类，里面直接就是 return user.getName();</em></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>Inflation 机制（膨胀）</strong>：<ul>
-<li>JVM 默认有一个阈值（sun.reflect.inflationThreshold，通常是 15）。</li>
-<li>一个方法被反射调用的<strong>前 15 次</strong>，会使用<strong>本地实现</strong>。</li>
-<li>当调用次数<strong>超过 15 次</strong>后，JVM 认为这是一个“热点”反射调用，就会切换到<strong>动态生成字节码的 Java 实现</strong>。因为 Java 实现经过 JIT 即时编译优化后，执行效率远高于 Native 调用。</li>
-</ul>
-</li>
-</ol>
-<p> <strong>阶段二：后续调用（快）</strong></p>
+<p><mark><strong>底层实现可以分为两个阶段：</strong></mark></p>
+<p><strong>1. 核心前提：类加载与 Class 对象</strong></p>
+<p>反射的起点是 Class 对象。当你写下一段代码并编译后，所有的类信息（类名、属性、方法、注解等）都会被写入 .class 文件中。</p>
 <ul>
-<li>一旦 MethodAccessor 的 Java 实现被生成并 JIT 编译后，后续的反射调用就<strong>绕过了所有检查和解析</strong>，直接执行那段<strong>高效的、编译好的字节码</strong>。</li>
-<li>这就是为什么反射在多次调用后，性能会大幅提升，甚至接近直接调用的原因。</li>
+<li><strong>类加载（Class Loading）：</strong> 当程序运行且首次用到某个类时，ClassLoader 会将 .class 文件加载到 JVM 的内存中（具体是方法区&#x2F;元空间 Metaspace）。</li>
+<li><strong>生成镜像：</strong> JVM 解析这些字节码后，会在堆内存中自动创建一个 java.lang.Class 类型的实例。<strong>这个 Class 对象就像是一面镜子，里面映射了该类的所有结构信息。</strong></li>
+<li><strong>反射API：</strong> 我们平时用的 Class.forName(), obj.getClass()，拿到的就是这个对象。所有的反射操作（获取方法、获取字段）都是在这个 Class 对象上进行的。</li>
+</ul>
+<p><strong>2. JVM 底层数据结构 (OOP-Klass 模型)</strong></p>
+<p>当你在 Java 层调用 clazz.getDeclaredMethods() 时，底层其实是通过 JNI（Java Native Interface）调用了 JVM 的 C++ 源码。JVM 会顺着 Java Class 对象找到对应的 C++ InstanceKlass 结构，然后从中提取出方法列表、字段列表等元数据，再将这些 C++ 数据转换成 Java 的 Method[] 或 Field[] 数组返回给你。</p>
+<p><strong>3. 核心机制：Method.invoke() 的底层执行逻辑</strong></p>
+<p>这是反射最核心、也是面试最常问的部分：当我们调用 method.invoke(obj, args) 时，到底发生了什么？</p>
+<p>Method.invoke 的底层并不只有一种实现方式，而是采用了一种叫做 <strong>“通货膨胀”（Inflation）</strong> 的动态切换机制。</p>
+<p>当你追踪 invoke 源码，会发现它把工作委托给了 MethodAccessor 接口。这个接口有两个主要实现：</p>
+<p><strong>阶段一：本地方法实现 (NativeMethodAccessorImpl)</strong></p>
+<p>默认情况下，前 15 次反射调用使用的是它。</p>
+<ul>
+<li><strong>原理：</strong> 它通过 JNI 调用 C++ 编写的底层代码来实现方法的执行。</li>
+<li><strong>优点：</strong> 启动快，不需要生成额外的 Java 字节码。</li>
+<li><strong>缺点：</strong> 每次执行都要跨越 Java 和 C++ 的边界（JNI 调用），执行效率较低。</li>
+</ul>
+<p><strong>阶段二：动态字节码生成 (GeneratedMethodAccessorXXX)</strong></p>
+<ul>
+<li><strong>触发：</strong> JVM 会维护一个计数器。当同一个方法的反射调用次数超过阈值（默认是 <strong>15</strong> 次，由参数 -Dsun.reflect.inflationThreshold 控制）时，JVM 会认为这个方法被频繁调用，于是触发“膨胀机制”。</li>
+<li><strong>原理：</strong> JVM 会在运行期动态生成一个全新的 Java 类（名字类似 sun.reflect.GeneratedMethodAccessor1），这个类里面包含了直接调用目标方法的<strong>普通 Java 字节码</strong>。然后将<mark>反射调用的委托对象切换到这个新生成的类上</mark>。</li>
+<li><strong>优点：</strong> 因为是纯 Java 字节码调用，JIT 编译器可以对其进行深度优化（比如内联优化），执行速度极快，接近原生调用。</li>
+<li><strong>缺点：</strong> 动态生成类、加载类需要消耗时间和内存（Metaspace）。</li>
+</ul>
+<p><strong>总结：</strong> 偶尔用一次反射，走 C++ JNI 层；频繁用反射，JVM 会动态写一段 Java 代码去帮你直接调用，以提升性能。</p>
+<p><strong>4. 字段的访问 (Field.get &#x2F; Field.set)</strong></p>
+<p>获取和设置字段的值与方法调用类似，也存在 FieldAccessor。<br>在底层，如果是通过反射直接修改属性，JVM 往往会借助 <mark><strong>Unsafe 类</strong></mark>。Unsafe 能够根据字段在对象内存布局中的<strong>内存偏移量（Offset）</strong>，直接对那块内存进行读写，从而实现赋值和取值。这也是为什么反射可以无视 private 修饰符的原因——它直接操作了内存。</p>
+<p><strong>5. 权限控制与 setAccessible(true)</strong></p>
+<p>在正常 Java 代码中，调用私有方法会在编译期报错。而在反射中，检查是在<strong>运行期</strong>进行的。</p>
+<ul>
+<li>当你调用 invoke 时，底层首先会执行 Reflection.ensureMemberAccess() 进行权限检查。</li>
+<li>如果你调用了 method.setAccessible(true)，并不是把方法的修饰符改成了 public，而是<strong>将 override 标志位设为 true</strong>。</li>
+<li>在 invoke 执行时，如果看到 override &#x3D;&#x3D; true，就会<strong>直接跳过安全检查</strong>。</li>
+<li><strong>性能提示：</strong> 安全检查是非常耗时的字符串匹配和位运算。因此，即使是 public 方法，如果你追求极致性能，在反射调用前执行 setAccessible(true) 也能带来一定的性能提升。</li>
 </ul>
 <p><strong>使用场景</strong></p>
 <p><strong>Spring IOC</strong></p>
@@ -1067,7 +1088,56 @@
 <li><strong>专门为改装者准备</strong>：一个想“改装”这辆车的玩家（子类），他需要拿到你的设计，然后他可以利用你预留的这些 protected 连接点，装上他自己的高性能配件。</li>
 </ol>
 <p><strong>protected</strong> <strong>就是父类给子类开放的、用于扩展和定制的“内部接口”或“工具”。它对外界是封闭的，但对“自家人”（子类）是开放的。</strong></p>
-<h1 id="满足什么条件时，一个-Java-类会被卸载？"><a href="#满足什么条件时，一个-Java-类会被卸载？" class="headerlink" title="满足什么条件时，一个 Java 类会被卸载？"></a>满足什么条件时，一个 Java 类会被卸载？</h1><p>类卸载非常罕见，主要发生在大量使用动态类生成（如 CGLib）或热部署的场景。<br>必须同时满足三个条件：<strong>实例没了、ClassLoader 没了、Class 对象没引用了</strong>。<br>只要是 JDK 自带类加载器加载的类，基本不会被卸载。”</p>
+<h1 id="满足什么条件时，一个-Java-类会被卸载？"><a href="#满足什么条件时，一个-Java-类会被卸载？" class="headerlink" title="满足什么条件时，一个 Java 类会被卸载？"></a>满足什么条件时，一个 Java 类会被卸载？</h1><p>类卸载非常罕见，主要发生在大量使用动态类生成（如 CGLib）或热部署的场景。<br>必须同时满足三个条件：<mark><strong>实例没了、ClassLoader 没了、Class 对象没引用了</strong>。</mark><br>只要是 JDK 自带类加载器加载的类，基本不会被卸载。”</p>
+<p>#能不能讲一下countdownlatch底层，我想听你对他深刻的理解</p>
+<p><strong>第一层：核心思想的提炼（一句话定调）</strong></p>
+<p>“我对 CountDownLatch 的深刻理解是：<strong>它本质上是一个基于 AQS 实现的、不可重置的‘一次性共享锁（门栓）’。</strong></p>
+<p>它的核心思想是解决**‘一等多’<strong>或</strong>‘多等一’**的线程协同问题。</p>
+<ul>
+<li><mark><strong>一等多（主线程等子线程）</mark>：</strong> 就像裁判等所有运动员跑过终点线，主线程调用 await() 阻塞，等所有子线程完成任务并分别调用 countDown() 把计数器减到 0 后，主线程才被唤醒继续执行。</li>
+<li><mark><strong>多等一（子线程等主线程）：</strong></mark> 就像所有运动员在起跑线上准备好调用 await() 阻塞，裁判主线程一声令下 countDown()，所有子线程瞬间并发冲出起跑线。</li>
+</ul>
+<p>而这套机制的底层，完全是由 AQS 的状态变量（state）和等待队列来支撑的。”</p>
+<p><strong>第二层：底层源码与 AQS 机制的深度解析（核心硬核部分）</strong></p>
+<p>“当我们深入源码，会发现 CountDownLatch 内部其实非常精简。它所有的魔法都委托给了一个继承自 AQS 的私有内部类 Sync。</p>
+<p>具体来说，它利用 AQS 做了三件核心的事：”</p>
+<p><strong>1. <mark>初始化：将倒数值映射为 AQS 的 state</strong></mark></p>
+<ul>
+<li>当我们 new CountDownLatch(N) 时，其实就是调用了 Sync 的构造器，<strong>直接把这个初始的倒数数值 N，赋值给了 AQS 内部由 volatile 修饰的 state 变量。</strong></li>
+<li>这个 state 就是整个机制的“命门”，volatile 保证了所有线程对它修改的可见性。</li>
+</ul>
+<p><strong>2. await() 的底层逻辑：尝试获取共享锁（失败则进队列阻塞）</strong></p>
+<ul>
+<li>当线程调用 await() 时，它其实是在调用 AQS 的 <strong>acquireSharedInterruptibly(1)</strong> 方法。</li>
+<li>语义是：<strong>“尝试以共享模式获取锁，且响应中断”。</strong></li>
+<li>AQS 会回调 CountDownLatch.Sync 实现的 tryAcquireShared() 方法。这个方法的逻辑极其简单粗暴：<strong>它只检查当前的 state 是否等于 0。</strong><ul>
+<li><strong>情况 A（门栓已开）：</strong> 如果 state &#x3D;&#x3D; 0，返回 1。表示获取锁成功，await() 方法直接 return，线程继续往下走（说明别人都干完活了，或者门本来就是开的）。</li>
+<li><strong>情况 B（门栓锁着）：</strong> 如果 state &gt; 0（比如还是初始的 N），返回 -1。表示获取锁失败。</li>
+</ul>
+</li>
+<li><strong>AQS 的排队机制生效：</strong> 获取失败后，AQS 会自动把当前调用 await() 的线程包装成一个 Node 节点，加入到 <mark>AQS 底层的双向阻塞队列</mark>（CLH 队列）中，并调用 LockSupport.park() 将该线程<strong>挂起（阻塞）</strong>，<mark>交出 CPU 资源。</mark></li>
+</ul>
+<p><strong>3. countDown() 的底层逻辑：释放共享锁（归零时触发群体唤醒）</strong></p>
+<ul>
+<li>当工作线程干完活调用 countDown() 时，它其实是在调用 AQS 的 <strong>releaseShared(1)</strong> 方法。</li>
+<li>语义是：<strong>“尝试以共享模式释放锁”。</strong></li>
+<li>AQS 会回调 Sync 实现的 tryReleaseShared() 方法。这里发生了一个非常关键的<mark>**自旋（for(;;)）加 CAS</mark>（Compare-And-Swap）**操作：<ol>
+<li>读取当前的 state 值。</li>
+<li>如果 state 已经是 0 了，说明倒数早就结束了，直接返回 false（啥也不做）。</li>
+<li>如果 state &gt; 0，就尝试用 CAS 将 state 的值减 1（即 state - 1）。</li>
+<li><strong>质变的发生点：</strong> <mark>如果 CAS 减 1 成功，并且<strong>减完之后的 state 刚好等于 0 了！</strong></mark> 这就意味着“我是最后一个完成任务的线程”。此时 tryReleaseShared() 会返回 true。</li>
+</ol>
+</li>
+<li><strong>AQS 的唤醒机制生效：</strong> 一旦返回 true，AQS 就会从等待队列的头部开始，调用 LockSupport.unpark()，<mark><strong>依次唤醒</strong>所有因为调用 await() 而被阻塞在队列里的线程。</mark></li>
+<li><strong>为什么叫“共享锁”？</strong> 因为是共享模式，所以这<mark>种唤醒是<strong>传播式</strong>的</mark>（Propagate）。<mark>被唤醒的第一个线程拿到锁后（因为此时 state 已经等于 0 了），它不仅自己会继续执行，还会立刻唤醒队列里它的下一个邻居，下一个又唤醒下一个，</mark>直到队列里所有等待的线程都被“释放”，从而实现了“瞬间并发冲出起跑线”的壮观效果。</li>
+</ul>
+<p><strong>第三层：深刻的反思与局限性（对比 CyclicBarrier）</strong></p>
+<p>“在深刻理解了它是由 AQS 的 state 减法实现后，我也就明白了 CountDownLatch 最大的局限性：<mark><strong>它是一次性的（一次性门栓）</mark>。</strong></p>
+<ul>
+<li>因为 state 减到 0 之后，CountDownLatch 就没有提供任何 API 可以把 state 重新恢复到最初的 N。这扇门一旦打开，就再也关不上了。后续如果有线程再调用 await() 会直接毫无阻拦地通过，调用 countDown() 也不会有任何实质反应。</li>
+<li>这就把它和另外一个长得很像的工具 <mark><strong>CyclicBarrier（循环栅栏</mark>）</strong> 彻底区分开了。CyclicBarrier 的底层不是直接依赖 AQS 的共享锁，而是基于 ReentrantLock 和 Condition 实现的。它在计数归零并打破栅栏后，可以自动重置计数器（reset()），从而支持循环使用。</li>
+<li>所以我认为，在架构选型时，CountDownLatch 更适合**‘一次性的大规模事件协调或初始化等待’<strong>（比如<mark>主线程等待多个后台组件全部加载完毕再启动服务</mark>）；而 CyclicBarrier 更适合</strong>‘分批次、多阶段的迭代计算’**（比如一组线程做完第一阶段的汇总后，在栅栏处等齐了，再一起开始做第二阶段）。”</li>
+</ul>
 
                 
               </div>
@@ -1167,9 +1237,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/" title="JVM">
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/" title="IO与网络">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">JVM</span>
+                        <span class="hidden-mobile">IO与网络</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -1177,8 +1247,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式">
-                        <span class="hidden-mobile">设计模式</span>
+                      <a href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/" title="JVM">
+                        <span class="hidden-mobile">JVM</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
