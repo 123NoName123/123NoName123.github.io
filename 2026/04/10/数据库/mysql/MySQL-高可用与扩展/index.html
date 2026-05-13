@@ -1,0 +1,1092 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/cat.ico">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="Yangyang Kong">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="对应原 MySQL-07 单篇；前三块内容已并入「事务与性能优化」，本篇专收复制、分片、迁移与一致性等主题。  高可用与扩展主从复制 mysql 的主从复制  延迟与一致性 MySQL 主从同步的延迟怎么减少 数据库迁移的时候怎样保证一致性  双写与全量增量 为什么有了全量更新 + 增量更新之后还需要双写数据库呢  分库分表 分库与分表，分表之后怎么切业务，分库分表有什么优缺点   知识补充（原">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL：高可用与扩展">
+<meta property="og:url" content="https://kyy-logs.github.io/2026/04/10/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/MySQL-%E9%AB%98%E5%8F%AF%E7%94%A8%E4%B8%8E%E6%89%A9%E5%B1%95/index.html">
+<meta property="og:site_name" content="多云的小站">
+<meta property="og:description" content="对应原 MySQL-07 单篇；前三块内容已并入「事务与性能优化」，本篇专收复制、分片、迁移与一致性等主题。  高可用与扩展主从复制 mysql 的主从复制  延迟与一致性 MySQL 主从同步的延迟怎么减少 数据库迁移的时候怎样保证一致性  双写与全量增量 为什么有了全量更新 + 增量更新之后还需要双写数据库呢  分库分表 分库与分表，分表之后怎么切业务，分库分表有什么优缺点   知识补充（原">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/fc5642ad9709758b7690dab98a5f0a3e.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/d67343ccc9ad2921bad9d2eb91e93fcb.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/3d8c25273ce94491abcdbeef5d14174c.webp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/b5a225b8d54d4da9a3a12effa2872a29.webp">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/0e864e53e2174f0dad07bc8d4802ba1b.webp">
+<meta property="og:image" content="https://javaguide.cn/assets/horizontal-slicing-database-D4Brw-dN.png">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/two-forms-of-sub-table-BBf2p_ED.png">
+<meta property="article:published_time" content="2026-04-10T04:19:00.000Z">
+<meta property="article:modified_time" content="2026-05-13T02:27:17.824Z">
+<meta property="article:author" content="Yangyang Kong">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="合并篇">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://kyy-logs.github.io/img/blog/fc5642ad9709758b7690dab98a5f0a3e.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>MySQL：高可用与扩展 - 多云的小站</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"kyy-logs.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":null,"loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"left","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>多云的小站</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-code-fill"></i>
+                <span>语言</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/language/java/" target="_self">
+                    <i class="iconfont icon-tags-fill"></i>
+                    <span>Java</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/language/spring/" target="_self">
+                    <i class="iconfont icon-tags-fill"></i>
+                    <span>Spring</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-database-fill"></i>
+                <span>数据库</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/database/mysql/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>MySQL</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/database/redis/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>Redis</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/mq/" target="_self">
+                <i class="iconfont icon-interactive-fill"></i>
+                <span>消息队列</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                <span>计算机基础</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>计算机网络</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" target="_self">
+                    <i class="iconfont icon-category-fill"></i>
+                    <span>操作系统</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/ai/" target="_self">
+                
+                <span>Ai</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/algorithm/" target="_self">
+                <i class="iconfont icon-launch-fill"></i>
+                <span>算法</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/scenario/" target="_self">
+                <i class="iconfont icon-project-fill"></i>
+                <span>场景题</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/opensource/" target="_self">
+                <i class="iconfont icon-github-fill"></i>
+                <span>开源项目</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="MySQL：高可用与扩展"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-04-10 12:19" pubdate>
+          2026年4月10日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="padding-left: 2rem; margin-right: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">MySQL：高可用与扩展</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>对应原 <code>MySQL-07</code> 单篇；前三块内容已并入「事务与性能优化」，本篇专收复制、分片、迁移与一致性等主题。</p>
+</blockquote>
+<h1 id="高可用与扩展"><a href="#高可用与扩展" class="headerlink" title="高可用与扩展"></a>高可用与扩展</h1><h1 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h1><ul>
+<li>mysql 的主从复制</li>
+</ul>
+<h1 id="延迟与一致性"><a href="#延迟与一致性" class="headerlink" title="延迟与一致性"></a>延迟与一致性</h1><ul>
+<li>MySQL 主从同步的延迟怎么减少</li>
+<li>数据库迁移的时候怎样保证一致性</li>
+</ul>
+<h1 id="双写与全量增量"><a href="#双写与全量增量" class="headerlink" title="双写与全量增量"></a>双写与全量增量</h1><ul>
+<li>为什么有了全量更新 + 增量更新之后还需要双写数据库呢</li>
+</ul>
+<h1 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h1><ul>
+<li>分库与分表，分表之后怎么切业务，分库分表有什么优缺点</li>
+</ul>
+<hr>
+<h1 id="知识补充（原-Mysql-md-迁入）"><a href="#知识补充（原-Mysql-md-迁入）" class="headerlink" title="知识补充（原 Mysql.md 迁入）"></a>知识补充（原 Mysql.md 迁入）</h1><blockquote>
+<p>下文节选自原稿 <code>Mysql.md</code>，已按主题并入本篇；外链示意图已尽量拉取到 <code>source/img/blog</code> 并以相对路径引用。</p>
+</blockquote>
+<h1 id="mysql的主从复制"><a href="#mysql的主从复制" class="headerlink" title="mysql的主从复制"></a>mysql的主从复制</h1><p>什么是主从复制？简单来说就是在主服务器上执行的语句，从服务器执行同样的语句，在主服务器上的操作在从服务器产生了同样的结果。</p>
+<p>主从复制的基本过程如下:</p>
+<p>Master（主数据库）将用户对数据库更新的操作以二进制格式保存到BinaryLog日志文件中。</p>
+<p>Slave（从数据库）上面的I0进程连接上Master， 并请求从指定日志文件的指定位置(或者从最开始的日志)之后的日志内容。</p>
+<p>Master接收到来自Slave的I0进程的请求后，通过负责复制的I0进程根据请求信息读取制定日志指定位置之后的日志信息，返回给Slave 的I0进程。返回信息中除了日志所包含的信息之外，还包括本次返回的信息已经到Master端的bin-log文件的名称以及bin-log的位置。</p>
+<p>Slave的I0进程接收到信息后，将接收到的日志内容依次添加到Slave端的relay-log文件的最末端，并将读取到的Master端的bin-log的文件名和位置记录到master-info文件中，以便在下一次读取的时候能够清楚的告诉Master “我需要从某个bin- log的哪个位置开始往后的日志内容，请发给我”。</p>
+<p>Slave的Sql进程检测到relay-log中新增加了内容后，会马上解析relay- log的内容成为在Master端真实执行时候的那些可执行的内容，并在自身执行。</p>
+<p><img src="/../../../img/blog/fc5642ad9709758b7690dab98a5f0a3e.png" srcset="/img/loading.gif" lazyload alt="image-fc5642ad9709758b7690dab98a5f0a3e"> </p>
+<p><strong>主从读写分离</strong></p>
+<ul>
+<li>只在主服务器上写，在从服务器上读；</li>
+<li>主数据库处理事务性查询，从数据库处理SELECT查询；</li>
+<li>进行读操作时，是在两个从服务器上轮流读取，利用虚拟模块MySQL-Proxy做读取从服务器时的轮询。</li>
+</ul>
+<p><img src="/../../../img/blog/d67343ccc9ad2921bad9d2eb91e93fcb.png" srcset="/img/loading.gif" lazyload alt="image-d67343ccc9ad2921bad9d2eb91e93fcb">  </p>
+<p><strong>主从复制模式</strong></p>
+<p><strong>1.主从复制原理</strong></p>
+<p>以MySQL一主两从架构为为例，也就是一个master节点下有两个slave节点，在这套架构下，写操作统一交给master节点，读请求交给slave节点处理。</p>
+<p>为了保证master节点和slave节点数据一致，在master节点写入数据后，会同时将数据复制到对应的slave节点。主从复制数据的过程中会用到三个线程，master节点上的binlog dump线程，slave节点的I\O线程和SQL线程。</p>
+<p><img src="/../../../img/blog/3d8c25273ce94491abcdbeef5d14174c.webp" srcset="/img/loading.gif" lazyload alt="image-3d8c25273ce94491abcdbeef5d14174c"> </p>
+<p>主从复制的核心流程：</p>
+<ol>
+<li>当master节点接收到一个写请求时，这个写请求可能是增删改操作，此时会把写请求的操作都记录到binlog日志中。</li>
+<li>master节点会把数据赋值给slave节点，如图中的两个slave节点。这个过程首先得要每个slave节点连接到master节点上，当slave节点连接到master节点上时，master节点会为每一个slave节点分别创建一个binlog dump线程，用于向每个slave节点发送binlog日志。</li>
+<li>此时，binlog dump线程会读取master节点上的binlog日志，然后将binlog日志发送给slave节点上的I&#x2F;O线程。</li>
+<li>slave几点上的I&#x2F;O线程接收到binlog日之后，会将binlog日志先写入到本地的relaylog中，relaylog中就保存了master的binlog日志。</li>
+<li>最后，slave节点上的SQL线程会读取relaylog中的biinlog日志，将其解析成具体的增删改操作，把这些在master节点上进行过的操作，重新在slave节点上也重做一遍，打到数据还原的效果，这样就可以保证master节点和slave节点的数据一致性了。</li>
+</ol>
+<p><strong>2.全同步复制</strong></p>
+<p>全同步复制，就是当主库执行完一个事物之后，要求所有的从库也都必须执行完该事务，才可以返回处理结果给客户端；因此虽然全同步复制数据一致性得到保证了，但是主库完成一个事物需要等待所有从库也完成，性能就比较低了。</p>
+<p><strong>3.异步复制</strong></p>
+<p>异步复制，当<mark>主库提交事务后</mark>会通知binlog dump线程发送binlog日志给从库，一旦binlog dump线程将binlog日志发送给从库之后，不需要等到从库也同步完成事务，主库就会讲处理结果返回给客户端。</p>
+<p>因为主库只管自己执行完事务，就可以将处理结果返回给客户端，而不用关系从库是否执行完事务，这就可能导致短暂的主从数据不一致的问题了，比如刚在主库插入的数据，如果马上在从库查询就可能查询不到。</p>
+<p>当主库提交食物后，如果宕机挂掉了，此时可能binlog还没来得及同步给从库，这时候如果为了回复故障切换主从节点的话，就会出现数据丢失的问题，所以异步复制虽然性能高，但数据一致性上是比较弱的。</p>
+<p>MySQL默认采用的是异步复制模式。</p>
+<p><strong>4.半同步复制</strong></p>
+<p>半同步复制就是在同步复制和异步中做了折中选择，我们可以结合着MySQL官网来看下是半同步和主从复制的过程。</p>
+<p><img src="/../../../img/blog/b5a225b8d54d4da9a3a12effa2872a29.webp" srcset="/img/loading.gif" lazyload alt="image-b5a225b8d54d4da9a3a12effa2872a29"> </p>
+<p>当主库提交事务后，至少还需要一个从库返回接收到binlog日志，并成功写入到relaylog的消息，这个的时候，主库才会讲处理结果返回给客户端。</p>
+<p>相比前两种复制方式，半同步复制较好地兼顾了数据一致性以及性能损耗的问题。</p>
+<p>同时，半同步复制也存在以下几个问题：</p>
+<ol>
+<li>半同步复制的性能，相比异步复制而言有所下降，因为需要等到等待至少一个从库确认接收到binlog日志的响应，所以新能上是有所损耗的。</li>
+<li>主库等待从库响应的最大时长我们是可以配置的，如果超过了我们配置的事件，半同步复制就会变成异步复制，那么，异步复制的问题同样也就出现了。</li>
+<li>在MySQL5.7.2之前的版本中，半同步复制存在幻读问题。当主库成功提交事务并处于等待从库确认的过程中，这个时候，从库都还没来得及返回处理结果给客户端，但因为主库存储引擎内部已经提交事务了，所以，其他客户端是可以到主库中读到数据的。但是，如果下一秒主库宕机，下次请求过来只能读取从库，因为从库还没有从主库同步数据，所以从库中读取不到这条数据了，和上一次读取数据的结果相比，就造成了幻读的现象。</li>
+</ol>
+<p><img src="/../../../img/blog/0e864e53e2174f0dad07bc8d4802ba1b.webp" srcset="/img/loading.gif" lazyload alt="image-0e864e53e2174f0dad07bc8d4802ba1b">  </p>
+<p><strong>注：异步复制和半同步复制都是在提交完事务之后再将binlog发给从库，防止提交事务前把日志发出去然后回滚导致数据不一致</strong></p>
+<p>半同步复制和异步复制一样，也是<strong>事务提交后才发送 binlog</strong>。但区别在于，半同步复制会等至少一个<strong>从库确认收到 binlog 后，主库才会给客户端返回成功</strong>，所以能更好地保证数据一致性，减少主库宕机后数据丢失的风险。</p>
+<hr>
+<h1 id="你说一下你-SQL-怎么进行优化的吧？如果说你的表单表的一个数据量非常大的话，你怎么进行一个连表查询的优化（https-blog-csdn-net-Tim-phper-article-details-78344444）（https-www-interviewquery-com-p-how-to-optimize-sql-query-with-multiple-joins）"><a href="#你说一下你-SQL-怎么进行优化的吧？如果说你的表单表的一个数据量非常大的话，你怎么进行一个连表查询的优化（https-blog-csdn-net-Tim-phper-article-details-78344444）（https-www-interviewquery-com-p-how-to-optimize-sql-query-with-multiple-joins）" class="headerlink" title="你说一下你 SQL 怎么进行优化的吧？如果说你的表单表的一个数据量非常大的话，你怎么进行一个连表查询的优化（https://blog.csdn.net/Tim_phper/article/details/78344444）（https://www.interviewquery.com/p/how-to-optimize-sql-query-with-multiple-joins）"></a>你说一下你 SQL 怎么进行优化的吧？如果说你的表单表的一个数据量非常大的话，你怎么进行一个连表查询的优化（<a target="_blank" rel="noopener" href="https://blog.csdn.net/Tim_phper/article/details/78344444%EF%BC%89%EF%BC%88https://www.interviewquery.com/p/how-to-optimize-sql-query-with-multiple-joins%EF%BC%89">https://blog.csdn.net/Tim_phper/article/details/78344444）（https://www.interviewquery.com/p/how-to-optimize-sql-query-with-multiple-joins）</a></h1><p><strong>连表查询的优化</strong></p>
+<p><strong>1.索引优化</strong></p>
+<ul>
+<li><strong>给 <code>JOIN</code> 连接字段创建索引</strong>，加快匹配速度。如 ON A.id &#x3D; B.id，需在 A.id 和 B.id 上建索引。</li>
+<li><strong>覆盖索引</strong>：尽可能让索引包含查询涉及的列，减少回表查询。</li>
+</ul>
+<p><strong>2.优化查询结构(sql)</strong></p>
+<ul>
+<li><p>转换为子查询的方式</p>
+<ul>
+<li><p>一般来说sql语句的执行先执行on, 再执行where语句。</p>
+</li>
+<li><p>我们可以采用子查询的方式，先where过滤条件让连接的表尽可能的小，在连接之前过滤数据，将多表查询拆分为多个简单查询，分别优化后再组合。</p>
+</li>
+<li><pre><code class="hljs">SELECT [c.name](http://c.name/), o.order_id, p.product_name
+FROM Customers c
+JOIN Orders o ON c.customer_id = o.customer_id
+JOIN Products p ON o.product_id = p.product_id
+WHERE o.order_date &gt; &#39;2024-01-01&#39; AND c.city = &#39;New York&#39;;
+
+子查询重写
+SELECT [c.name](http://c.name/), o.order_id, p.product_name
+FROM Customers c
+WHERE c.city = &#39;New York&#39;
+AND o.order_id IN (
+SELECT order_id
+FROM Orders
+WHERE order_date &gt; &#39;2024-01-01&#39;
+);
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>避免 SELECT *，只选择需要的列，减少数据传输。</p>
+</li>
+<li><p>使用 EXISTS 或 IN：在某些情况下，尤其是在处理大型数据集和多个复杂的 JOIN 条件时，使用 EXISTS 或 IN 比创建子查询更有效。这些情况可能包括：</p>
+<ul>
+<li>相关子查询。如果子查询（EXISTS 或 IN 所在的位置）与外部查询相关，则这些子句比 JOIN 更高效。</li>
+<li>稀疏数据。当处理没有与其他表对应的行的表时，这些子句的性能可能优于连接。</li>
+<li>半连接。如果您只需要检查相关行是否存在，而不需要检索数据，那么 EXISTS 和 IN 会非常有用。</li>
+</ul>
+</li>
+<li><p>使用 INNER JOIN 替代 Outer JOIN</p>
+<ul>
+<li>如果您只需要两个表中匹配的数据，请使用内连接 (INNER JOIN) 而不是外连接 (LEFT、RIGHT、FULL)，以减少编写复杂查询和操作错误</li>
+<li>选择 JOIN 顺序，以最小化后续 JOIN 中涉及的行数。小表驱动大表</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.数据库分库分表</strong></p>
+<p><strong>4.缓存常用查询结果能节省处理时间，特别是复杂查询。</strong></p>
+<hr>
+<h1 id="MySQL-主从同步的延迟怎么减少"><a href="#MySQL-主从同步的延迟怎么减少" class="headerlink" title="MySQL 主从同步的延迟怎么减少"></a>MySQL 主从同步的延迟怎么减少</h1><hr>
+<h1 id="分库与分表，分表之后怎么切业务-分库分表有什么缺点（实战彻底搞清分库分表（垂直分库，垂直分表，水平分库，水平分表）-腾讯云开发者社区-腾讯云）"><a href="#分库与分表，分表之后怎么切业务-分库分表有什么缺点（实战彻底搞清分库分表（垂直分库，垂直分表，水平分库，水平分表）-腾讯云开发者社区-腾讯云）" class="headerlink" title="分库与分表，分表之后怎么切业务,分库分表有什么缺点（实战彻底搞清分库分表（垂直分库，垂直分表，水平分库，水平分表）-腾讯云开发者社区-腾讯云）"></a>分库与分表，分表之后怎么切业务,分库分表有什么缺点（<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1819045">实战彻底搞清分库分表（垂直分库，垂直分表，水平分库，水平分表）-腾讯云开发者社区-腾讯云</a>）</h1><p>读写分离主要应对的是数据库读并发，没有解决数据库存储问题。试想一下：<strong>如果 MySQL 一张表的数据量过大怎么办?</strong></p>
+<p><strong>1.分库</strong></p>
+<p>分库就是将数据库的数据散落到不同的数据库中，分为水平分库和垂直分库</p>
+<p><strong>垂直分库</strong>就是将单一的数据库按照业务进行划分，不同的业务使用不同的数据库，进而将一个数据库的压力分担到多个数据库</p>
+<p>举个例子：说你将数据库中的用户表、订单表和商品表分别单独拆分为用户数据库、订单数据库和商品数据库。</p>
+<p><img src="data:image/png;base64,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" srcset="/img/loading.gif" lazyload alt="垂直分库"></p>
+<p><strong>水平分库</strong>是把同一个表按照一定规则拆分到不同的数据库中，每个库可以位于不同的服务器上，这样就实现了水平扩展，解决了单表的存储和性能瓶颈的问题。</p>
+<p>举个例子：订单表数据量太大，你对订单表进行了水平切分（水平分表），然后将切分后的 2 张订单表分别放在两个不同的数据库。</p>
+<p><img src="https://javaguide.cn/assets/horizontal-slicing-database-D4Brw-dN.png" srcset="/img/loading.gif" lazyload alt="image-horizontal-slicing-database-D4Brw-dN"> </p>
+<p><strong>2.分表</strong></p>
+<p><strong>分表</strong> 就是对单表的数据进行拆分，可以是垂直拆分，也可以是水平拆分。</p>
+<p><strong>垂直分表</strong> 是对数据表列的拆分，把一张列比较多的表拆分为多张表，这样就可以进行冷热分离，hot列与cool列分开。</p>
+<p>举个例子：我们可以将用户信息表中的一些列单独抽出来作为一个表。</p>
+<p><strong>水平分表</strong> 是对数据表行的拆分，把一张行比较多的表拆分为多张表，可以解决单一表数据量过大的问题。</p>
+<p>举个例子：我们可以将用户信息表拆分成多个用户信息表，这样就可以避免单一表数据量过大对性能造成影响。</p>
+<p>水平拆分只能解决单表数据量大的问题，为了提升性能，我们通常会选择将拆分后的多张表放在不同的数据库中。也就是说，水平分表通常和水平分库同时出现。</p>
+<p><img src="/../../../img/blog/two-forms-of-sub-table-BBf2p_ED.png" srcset="/img/loading.gif" lazyload alt="image-two-forms-of-sub-table-BBf2p_ED"></p>
+<p><strong>3.什么情况下需要分库分表</strong></p>
+<p>遇到下面几种场景可以考虑分库分表：</p>
+<ul>
+<li>单表的数据达到千万级别以上，数据库读写速度比较缓慢。</li>
+<li>数据库中的数据占用的空间越来越大，备份时间越来越长。</li>
+<li>应用的并发量太大（应该优先考虑其他性能优化方法，而非分库分表）。</li>
+</ul>
+<p>不过，分库分表的成本太高，如非必要尽量不要采用。而且，并不一定是单表千万级数据量就要分表，毕竟每张表包含的字段不同，它们在不错的性能下能够存放的数据量也不同，还是要具体情况具体分析。</p>
+<p><strong>4.数据层面拆分</strong></p>
+<ul>
+<li><p>按日期拆分：这种使用方式比较普遍，尤其是按照日期维度的拆分，其实在程序层面的改动很小，但是扩展性方面的收益很大。</p>
+<ul>
+<li>日维度拆分，如test_20191021</li>
+<li>月维度拆分,如test_201910</li>
+<li>年维度拆分,如test_2019</li>
+</ul>
+</li>
+<li><p>按主键范围拆分：例如【1,200w】主键在一个表，【200w，400w】主键在一个表。优点是单表数据量可控。缺点是流量无法分摊，写操作集中在最后面的表。</p>
+</li>
+<li><p>中间表映射：表随意拆分，引入中间表记录查询的字段值，以及它对应的数据在哪个表里。优点是灵活。确定是引入中间表让流程变复杂。</p>
+</li>
+<li><p>hash切分：sharding_key%N。优点是数据分片均匀，流量分摊。缺点是扩容需要迁移数据，跨节点查询问题。</p>
+</li>
+</ul>
+<p><strong>5.选择分表字段的原则：</strong></p>
+<ol>
+<li>数据分布均匀</li>
+</ol>
+<p>最佳的分表字段应该是能够让数据分布均匀的字段，这样可以避免某个表的数据过多，导致查询效率降低。在用户表中，如果以地区作为分表字段，可能会导致某些地区的数据过多，而某些地区的数据过少。</p>
+<ol start="2">
+<li>频繁查询的字段</li>
+</ol>
+<p>尽量选择查询频率最高的字段（例如主键id），然后根据表拆分方式选择字段。在一个订单表中，如果经常需要根据用户ID查询订单信息，那么以用户ID作为分表字段是一个不错的选择。</p>
+<ol start="3">
+<li>不可变字段</li>
+</ol>
+<p>最佳的分表字段还应该是不可变的字段，这样可以避免在数据迁移时出现问题。在一个商品表中，如果选择以商品名称作为分表字段，那么当商品名称发生变化时，就需要将数据移动到不同的表中，这样会增加系统的复杂度。</p>
+<p><strong>6.分库分表带来的问题</strong></p>
+<ul>
+<li>join操作</li>
+</ul>
+<p>水平分表后，虽然物理上分散在多个表中，如果需要与其它表进行join查询，需要在业务代码或者数据库中间件中进行多次join查询，然后将结果合并。</p>
+<ul>
+<li>COUNT（*）操作</li>
+</ul>
+<p>水平分表后，某些场景下需要将这些表当作一个表来处理，那么count(*)显得没有那么容易 了。</p>
+<ul>
+<li>order by 操作</li>
+</ul>
+<p>分表后，数据分散到多个表中，排序操作无法在数据库中完成，只能由业务代码或数据中间件分别查询每个子表中的数据，然后汇总进行排序。</p>
+<hr>
+<h1 id="数据库迁移的时候怎样保证一致性"><a href="#数据库迁移的时候怎样保证一致性" class="headerlink" title="数据库迁移的时候怎样保证一致性"></a>数据库迁移的时候怎样保证一致性</h1><hr>
+<h1 id="数据库迁移，同时更新数据库呢"><a href="#数据库迁移，同时更新数据库呢" class="headerlink" title="数据库迁移，同时更新数据库呢"></a>数据库迁移，同时更新数据库呢</h1><hr>
+<h1 id="分库分表的底层原理了解吗"><a href="#分库分表的底层原理了解吗" class="headerlink" title="分库分表的底层原理了解吗"></a>分库分表的底层原理了解吗</h1>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/MySQL/" class="category-chain-item">MySQL</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/MySQL/" class="print-no-link">#MySQL</a>
+      
+        <a href="/tags/%E5%90%88%E5%B9%B6%E7%AF%87/" class="print-no-link">#合并篇</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>MySQL：高可用与扩展</div>
+      <div>https://kyy-logs.github.io/2026/04/10/数据库/mysql/MySQL-高可用与扩展/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>Yangyang Kong</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年4月10日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2026/04/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" title="计算机网络">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">计算机网络</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2026/04/10/%E6%95%B0%E6%8D%AE%E5%BA%93/mysql/MySQL-%E4%BA%8B%E5%8A%A1%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="MySQL：事务与性能优化">
+                        <span class="hidden-mobile">MySQL：事务与性能优化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  
+  
+    <article id="comments" lazyload>
+      
+    <div id="giscus" class="giscus"></div>
+    <script type="text/javascript">
+      Fluid.utils.loadComments('#giscus', function() {
+        var options = {"repo":"kyy-logs/review-repository","repo-id":"R_kgDOR9LLEQ","category":"General","category-id":"DIC_kwDOR9LLEc4C6Yb2","theme-light":"light","theme-dark":"dark","mapping":"pathname","reactions-enabled":1,"emit-metadata":0,"input-position":"bottom","lang":"zh-CN"};
+        var attributes = {};
+        for (let option in options) {
+          if (!option.startsWith('theme-')) {
+            var key = option.startsWith('data-') ? option : 'data-' + option;
+            attributes[key] = options[option];
+          }
+        }
+        var light = 'light';
+        var dark = 'dark';
+        window.GiscusThemeLight = light;
+        window.GiscusThemeDark = dark;
+        attributes['data-theme'] = document.documentElement.getAttribute('data-user-color-scheme') === 'dark' ? dark : light;
+        for (let attribute in attributes) {
+          var value = attributes[attribute];
+          if (value === undefined || value === null || value === '') {
+            delete attributes[attribute];
+          }
+        }
+        var s = document.createElement('script');
+        s.setAttribute('src', 'https://giscus.app/client.js');
+        s.setAttribute('crossorigin', 'anonymous');
+        for (let attribute in attributes) {
+          s.setAttribute(attribute, attributes[attribute]);
+        }
+        var ss = document.getElementsByTagName('script');
+        var e = ss.length > 0 ? ss[ss.length - 1] : document.head || document.documentElement;
+        e.parentNode.insertBefore(s, e.nextSibling);
+      });
+    </script>
+    <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+    </article>
+  
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
