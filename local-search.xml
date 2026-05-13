@@ -15,7 +15,7 @@
       
       <category>数据库</category>
       
-      <category>redis</category>
+      <category>Redis</category>
       
     </categories>
     
@@ -197,35 +197,6 @@
   
   
   <entry>
-    <title>IO与网络</title>
-    <link href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/"/>
-    <url>/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/</url>
-    
-    <content type="html"><![CDATA[<h1 id="NIO-Java-NIO-核心知识总结-JavaGuide"><a href="#NIO-Java-NIO-核心知识总结-JavaGuide" class="headerlink" title="NIO(Java NIO 核心知识总结 | JavaGuide)"></a>NIO(<a href="https://javaguide.cn/java/io/nio-basis.html#selector-%E9%80%89%E6%8B%A9%E5%99%A8">Java NIO 核心知识总结 | JavaGuide</a>)</h1>]]></content>
-    
-    
-    <categories>
-      
-      <category>语言</category>
-      
-      <category>Java</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>Java</tag>
-      
-      <tag>IO</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>JVM</title>
     <link href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/"/>
     <url>/2026/04/09/%E8%AF%AD%E8%A8%80/java/JVM/</url>
@@ -276,6 +247,35 @@
       <tag>Java</tag>
       
       <tag>基础</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>IO与网络</title>
+    <link href="/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/"/>
+    <url>/2026/04/09/%E8%AF%AD%E8%A8%80/java/IO%E4%B8%8E%E7%BD%91%E7%BB%9C/</url>
+    
+    <content type="html"><![CDATA[<h1 id="NIO-Java-NIO-核心知识总结-JavaGuide"><a href="#NIO-Java-NIO-核心知识总结-JavaGuide" class="headerlink" title="NIO(Java NIO 核心知识总结 | JavaGuide)"></a>NIO(<a href="https://javaguide.cn/java/io/nio-basis.html#selector-%E9%80%89%E6%8B%A9%E5%99%A8">Java NIO 核心知识总结 | JavaGuide</a>)</h1>]]></content>
+    
+    
+    <categories>
+      
+      <category>语言</category>
+      
+      <category>Java</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Java</tag>
+      
+      <tag>IO</tag>
       
     </tags>
     
