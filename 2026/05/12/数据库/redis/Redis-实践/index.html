@@ -66,7 +66,7 @@
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250308100509188-1778641663049.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250308100730691-1778640136891.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250308100807852-1778641670720.png">
-<meta property="og:image" content="https://i-blog.csdnimg.cn/direct/6cbf0d03fe7544c982d56d8fbec0f247.png#pic_center">
+<meta property="og:image" content="https://kyy-logs.github.io/img/blog/6cbf0d03fe7544c982d56d8fbec0f247.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250309155559490-1778641687906.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250309155814906.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20260108112609522-1778640136891.png">
@@ -74,7 +74,7 @@
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/image-20250518172921679-1778641732967.png">
 <meta property="og:image" content="https://kyy-logs.github.io/img/blog/0aa834f68011ddf3c6dc39031724c64a.png">
 <meta property="article:published_time" content="2026-05-12T04:00:00.000Z">
-<meta property="article:modified_time" content="2026-05-13T03:11:39.649Z">
+<meta property="article:modified_time" content="2026-05-13T03:14:52.794Z">
 <meta property="article:author" content="Yangyang Kong">
 <meta property="article:tag" content="Redis">
 <meta name="twitter:card" content="summary_large_image">
@@ -1549,7 +1549,7 @@
 <p><img src="/../../../img/blog/image-20250308100730691-1778640136891.png" srcset="/img/loading.gif" lazyload alt="image-20250308100730691"></p>
 <p><img src="/../../../img/blog/image-20250308100807852-1778641670720.png" srcset="/img/loading.gif" lazyload alt="image-20250308100807852"></p>
 <p><em><strong>哨兵模式原理</strong></em>*</p>
-<p>1.哨兵节点通过发送命令来监控Redis服务器的状态。它会定期向主节点和从节点发送PING命令，检查节点是否存活。<br>		2.当主节点发生故障或不可用时，哨兵节点会进行故障检测。它会询问其他哨兵节点是否已经发现了主节点的故障，并尝试达成共识。<br>		3.如果多数哨兵节点都认为主节点故障，那么它们会选举新的主节点。选举的原则是选择一个具有最高优先级的从节点，如果没有从节点则选择一个具有最高优先级的哨兵节点。<br>		4.一旦新的主节点被选出，哨兵节点会更新所有其他从节点的配置信息，使它们成为新主节点的从节点。<br>		5.当故障的主节点恢复时，哨兵节点会将其重新加入到主从复制环境中，并将其设置为新主节点的从节点。<br>		6.通过哨兵模式，Redis可以实现高可用性和故障恢复。当主节点发生故障时，哨兵节点可以自动切换为新的主节点，使系统可以在故障期间继续提供服务。同时，哨兵节点可以监控并修复其他节点的故障，确保整个Redis集群处于可用状态。<br><img src="https://i-blog.csdnimg.cn/direct/6cbf0d03fe7544c982d56d8fbec0f247.png#pic_center" srcset="/img/loading.gif" lazyload alt="6cbf0d03fe7544c982d56d8fbec0f247"> </p>
+<p>1.哨兵节点通过发送命令来监控Redis服务器的状态。它会定期向主节点和从节点发送PING命令，检查节点是否存活。<br>		2.当主节点发生故障或不可用时，哨兵节点会进行故障检测。它会询问其他哨兵节点是否已经发现了主节点的故障，并尝试达成共识。<br>		3.如果多数哨兵节点都认为主节点故障，那么它们会选举新的主节点。选举的原则是选择一个具有最高优先级的从节点，如果没有从节点则选择一个具有最高优先级的哨兵节点。<br>		4.一旦新的主节点被选出，哨兵节点会更新所有其他从节点的配置信息，使它们成为新主节点的从节点。<br>		5.当故障的主节点恢复时，哨兵节点会将其重新加入到主从复制环境中，并将其设置为新主节点的从节点。<br>		6.通过哨兵模式，Redis可以实现高可用性和故障恢复。当主节点发生故障时，哨兵节点可以自动切换为新的主节点，使系统可以在故障期间继续提供服务。同时，哨兵节点可以监控并修复其他节点的故障，确保整个Redis集群处于可用状态。<br><img src="/../../../img/blog/6cbf0d03fe7544c982d56d8fbec0f247.png" srcset="/img/loading.gif" lazyload alt="6cbf0d03fe7544c982d56d8fbec0f247"> </p>
 <h1 id="Redis单线程和多线程问题"><a href="#Redis单线程和多线程问题" class="headerlink" title="Redis单线程和多线程问题"></a>Redis单线程和多线程问题</h1><p><img src="/../../../img/blog/image-20250309155559490-1778641687906.png" srcset="/img/loading.gif" lazyload alt="image-20250309155559490"></p>
 <p><strong>1.Redis为什么使用单线程</strong></p>
 <p><img src="/../../../img/blog/image-20250309155814906.png" srcset="/img/loading.gif" lazyload alt="image-20250309155814906"></p>
